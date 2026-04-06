@@ -1,5 +1,6 @@
-package com.example.project_10.user;
+package com.example.project_10.repository;
 
+import com.example.project_10.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

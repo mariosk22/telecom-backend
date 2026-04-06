@@ -1,6 +1,9 @@
-package com.example.project_10.user;
+package com.example.project_10.service;
 
-import com.example.project_10.authentication.Register;
+import com.example.project_10.dto.RegisterDto;
+import com.example.project_10.entity.User;
+import com.example.project_10.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -9,11 +12,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @Service
 public class UserService {
 
+    @Autowired
     private UserRepository userRepository;
 
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-    public void register(Register reg) {
+    public void register(RegisterDto reg) {
         if(userRepository.findByEmail(reg.getEmail()).isPresent()) {
             throw new RuntimeException("Email already exists");
         }
@@ -22,10 +26,9 @@ public class UserService {
         user.setEmail(reg.getEmail());
         String hashedPassword = encoder.encode(reg.getPassword());
         user.setPassword(hashedPassword);
-        user.setAge(reg.getAge());
         user.setName(reg.getName());
         user.setSurname(reg.getSurname());
-        user.setDateOfBirth(reg.getDate_of_birth());
+        user.setDateOfBirth(reg.getBirthDate());
         user.setNickname(reg.getNickname());
         userRepository.save(user);
     }

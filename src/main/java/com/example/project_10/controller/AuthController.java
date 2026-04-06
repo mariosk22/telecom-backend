@@ -1,7 +1,10 @@
-package com.example.project_10.authentication;
+package com.example.project_10.controller;
 
-import com.example.project_10.user.User;
-import com.example.project_10.user.UserService;
+import com.example.project_10.dto.LoginDto;
+import com.example.project_10.dto.RegisterDto;
+import com.example.project_10.entity.User;
+import com.example.project_10.service.UserService;
+import jakarta.validation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +22,7 @@ public class AuthController {
     private UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody Register request){
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterDto request){
         try{
             userService.register(request);
             return ResponseEntity.ok(Map.of("message", "Register successfully!"));
@@ -30,7 +33,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Login request){
+    public ResponseEntity<?> login(@Valid @RequestBody LoginDto request){
         try {
             User user = userService.login(request.getEmail(), request.getPassword());
             return  ResponseEntity.ok(Map.of("message", "Login successfully!"));

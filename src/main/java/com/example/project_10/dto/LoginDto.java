@@ -1,7 +1,14 @@
-package com.example.project_10.authentication;
+package com.example.project_10.dto;
 
-public class Login {
+import jakarta.validation.constraints.*;
+
+public class LoginDto {
+
+    @NotBlank(message = "Email nesmie byť prázdny")
+    @Email(message = "Neplatný formát emailu")
     private String email;
+
+    @NotBlank(message = "Heslo nesmie byť prázdne")
     private String password;
 
     public String getEmail() {
