@@ -15,7 +15,8 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+    @Autowired
+    private BCryptPasswordEncoder encoder;
 
     public void register(RegisterDto reg) {
         if(userRepository.findByEmail(reg.getEmail()).isPresent()) {
@@ -24,8 +25,7 @@ public class UserService {
 
         User user = new User();
         user.setEmail(reg.getEmail());
-        String hashedPassword = encoder.encode(reg.getPassword());
-        user.setPassword(hashedPassword);
+        user.setPassword(encoder.encode(reg.getPassword()));
         user.setName(reg.getName());
         user.setSurname(reg.getSurname());
         user.setDateOfBirth(reg.getBirthDate());
