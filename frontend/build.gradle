@@ -1,0 +1,25 @@
+plugins {
+    id "base"
+    id "com.github.node-gradle.node" version "${nodeGradlePluginVersion}"
+}
+
+node {
+    version = project.nodeVersion
+    download = true   // download Node so devs don't need local Node installed
+    npmVersion = project.npmVersion
+}
+
+description = "Frontend UI for Repository Checker"
+
+tasks.register("buildFrontend", NpmTask) {
+    dependsOn(tasks.named("npmInstall"))
+    inputs.dir(fileTree("src").exclude("**/*.test.js").exclude("**/*.spec.js").exclude("**/__tests__/**/*.js"))
+    inputs.dir("node_modules")
+    inputs.dir("public")
+
+    args = ["run", "build"]
+}
+
+tasks.named("build") {
+    dependsOn("buildFrontend")
+}
