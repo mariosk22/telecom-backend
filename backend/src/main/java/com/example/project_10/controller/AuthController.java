@@ -3,6 +3,7 @@ package com.example.project_10.controller;
 import com.example.project_10.dto.LoginDto;
 import com.example.project_10.dto.RegisterDto;
 import com.example.project_10.entity.User;
+import com.example.project_10.security.JWTUtil;
 import com.example.project_10.service.UserService;
 import jakarta.validation.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,9 @@ import java.util.Map;
 public class AuthController {
 
     @Autowired
+    private JWTUtil jwtUtil;
+
+    @Autowired
     private UserService userService;
 
     @PostMapping("/register")
@@ -27,7 +31,7 @@ public class AuthController {
             userService.register(request);
             return ResponseEntity.ok(Map.of("message", "Register successfully!"));
         }catch(Exception e){
-            return ResponseEntity.badRequest().body("Register failed!");
+            return ResponseEntity.status(400).body("Register failed!");
         }
 
     }
@@ -36,10 +40,10 @@ public class AuthController {
     public ResponseEntity<?> login(@Valid @RequestBody LoginDto request){
         try {
             User user = userService.login(request.getEmail(), request.getPassword());
-            return  ResponseEntity.ok(Map.of("message", "Login successfully!"));
+            String token = jwtUtil.createToken(request.getEmail());
+            return  ResponseEntity.ok(Map.of("token", token));
         }catch(Exception e){
-            return ResponseEntity.badRequest().body("Login failed!");
+            return ResponseEntity.status(401).body("Login failed!");
         }
     }
 }
-
