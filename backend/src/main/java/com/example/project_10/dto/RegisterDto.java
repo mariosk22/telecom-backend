@@ -7,32 +7,32 @@ import java.time.LocalDate;
 
 public class RegisterDto {
 
-    @NotNull(message = "Dátum narodenia nesmie byť prázdny")
-    @Past(message = "Dátum narodenia musí byť v minulosti")
+    @NotNull(message = "Date of birth cannot be empty!")
+    @Past(message = "Date of birth cannot be in past!")
     private LocalDate birthDate;
 
-    @NotBlank(message = "Email nesmie byť prázdny")
-    @Email(message = "Neplatný formát emailu")
+    @NotBlank(message = "Email cannot be empty!")
+    @Email(message = "Invalid email format!")
     private String email;
 
-    @NotBlank(message = "Meno nesmie byť prázdne")
+    @NotBlank(message = "Name cannot be empty!")
     @Size(min = 2, max = 50)
     private String name;
 
-    @NotBlank(message = "Prezývka nesmie byť prázdna")
+    @NotBlank(message = "Nickname cannot be empty!")
     @Size(min = 3, max = 50)
-    @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "Prezývka môže obsahovať iba písmená a číslice")
+    @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "Nickname can only contains numbers and letters")
     private String nickname;
 
-    @NotBlank(message = "Heslo nesmie byť prázdne")
-    @Size(min = 8, message = "Heslo musí mať aspoň 8 znakov")
+    @NotBlank(message = "Password cannot be empty!")
+    @Size(min = 8, message = "Password must be at least 8 characters long!")
     @Pattern(
             regexp = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).+$",
-            message = "Heslo musí obsahovať veľké písmeno, číslo a špeciálny znak"
+            message = "Password must contains capital letters, numbers and special characters!"
     )
     private String password;
 
-    @NotBlank(message = "Priezvisko nesmie byť prázdne")
+    @NotBlank(message = "Surname cannot be empty! ")
     @Size(min = 2, max = 50)
     private String surname;
 
