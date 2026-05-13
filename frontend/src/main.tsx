@@ -4,7 +4,7 @@ import App from "./App.tsx";
 import "./index.css"; // ← tu sa načítajú VŠETKY tvoje štýly
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+    <React.StrictMode>
+        <App />
+    </React.StrictMode>,
 );
