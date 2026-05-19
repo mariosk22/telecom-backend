@@ -3,6 +3,7 @@ import React, { useState } from "react";
 
 const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
 const MIN_AGE = 15;
+const API_BASE_URL = "YOUR_API_URL";
 
 const AuthPage: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
     const [activeTab, setActiveTab] = useState<"login" | "register">("login");
@@ -60,12 +61,50 @@ const AuthPage: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
         return Object.keys(err).length === 0;
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (activeTab === "login") {
-            if (validateLogin()) onSuccess();
+            if (!validateLogin()) return;
+
+            const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    email: loginUsername,
+                    password: loginPassword,
+                }),
+            });
+
+            if (!response.ok) {
+                return;
+            }
+
+            onSuccess();
         } else {
-            if (validateRegister()) onSuccess();
+            if (!validateRegister()) return;
+
+            const response = await fetch(`${API_BASE_URL}/auth/register`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    email: regEmail,
+                    name: "YOUR_NAME",
+                    nickname: regUsername,
+                    password: regPassword,
+                    surname: "YOUR_SURNAME",
+                    birthDate: regAge,
+                }),
+            });
+
+            if (!response.ok) {
+                return;
+            }
+
+            onSuccess();
         }
     };
 
