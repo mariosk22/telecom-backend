@@ -1,9 +1,9 @@
 // src/pages/AuthPage.tsx
 import React, { useState } from "react";
 
-const passwordRegex = /^(?=.[A-Z])(?=.[0-9])(?=.[!@#$%^&]).{8,}$/;
+const passwordRegex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$/;
 const MIN_AGE = 15;
-const API_BASE_URL = "localhost:9090";
+const API_BASE_URL = "http://localhost:9090";
 
 const AuthPage: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
