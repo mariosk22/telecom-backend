@@ -1,1 +1,7 @@
+<<<<<<< HEAD
 rootProject.name = 'Project_1-0'
+=======
+rootProject.name = 'telekom-team-project'
+
+include 'backend', 'frontend'
+>>>>>>> d19a0be (BE+FE build)

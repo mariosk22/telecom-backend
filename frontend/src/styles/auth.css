@@ -1,0 +1,92 @@
+/* AUTH PAGE */
+.auth-container {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    width: 100%;
+    max-width: 420px;
+    margin: 40px auto;
+}
+
+.tab-group {
+    display: flex;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid #eee;
+}
+
+.tab {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    background: none;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #999;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.tab.active {
+    color: #007bff;
+    border-bottom: 3px solid #007bff;
+}
+
+.input-group {
+    margin-bottom: 1.3rem;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+    color: #555;
+    font-weight: 600;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 6px;
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+    font-size: 1.1rem;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: all 0.2s;
+}
+
+.submit-btn:hover {
+    background-color: #0056b3;
+}
+
+.register-variant {
+    background-color: #28a745;
+}
+
+.register-variant:hover {
+    background-color: #218838;
+}
+
+.text-red-500 {
+    color: #dc3545;
+    font-size: 0.85rem;
+    margin-top: 4px;
+}

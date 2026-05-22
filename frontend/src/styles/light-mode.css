@@ -1,0 +1,79 @@
+/* LIGHT MODE */
+body.light-mode {
+    --bg-dark: #f2f2f7;
+    --card-bg: #ffffff;
+    --card-hover: #e5e5ea;
+    --text-main: #000000;
+    --text-dim: #3c3c43;
+    --border-color: rgba(0, 0, 0, 0.1);
+    background-image: none;
+    background-color: var(--bg-dark);
+}
+
+body.light-mode .sidebar {
+    background-color: white;
+}
+
+body.light-mode .category {
+    color: black;
+}
+
+body.light-mode .navbar {
+    background-color: white;
+}
+
+.light-mode .search-container {
+    background: rgb(231, 231, 231);
+    color: rgb(172, 172, 172);
+}
+
+.light-mode .search-input {
+    color: black;
+}
+
+body.light-mode .btn-up {
+    color: black;
+}
+
+body.light-mode .btn-down {
+    color: black;
+}
+
+body.light-mode .btn-up:hover {
+    color: white;
+}
+
+body.light-mode .btn-down:hover {
+    color: white;
+}
+
+body.light-mode .post {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    background-color: white;
+    color: black;
+}
+
+.light-mode .post.active h2 {
+    color: black;
+}
+
+.light-mode .post.active p {
+    color: black;
+}
+
+.light-mode .btn-follow:hover {
+    background-color: black;
+    color: white;
+}
+
+body.light-mode .comments-overlay {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.light-mode .comment-item {
+    background-color: white;
+}
+
+.light-mode .comment-item p {
+    color: black;
+}

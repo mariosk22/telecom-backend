@@ -1,0 +1,92 @@
+/* NAVBAR */
+.navbar {
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    padding: 1rem;
+    background: rgba(18, 18, 18, 0.85);
+    backdrop-filter: blur(15px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid var(--border-color);
+    width: 100%;
+    padding: 1rem 20px;
+    background: rgba(18, 18, 18, 0.8);
+    backdrop-filter: blur(10px);
+    position: fixed;
+    top: 0;
+    z-index: 100;
+}
+
+.nav-content {
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px; 
+}
+
+.logo {
+    font-weight: 800;
+    font-size: 1.5rem;
+    white-space: nowrap;
+    position: fixed;
+    left: 20px;
+}
+
+.search-container {
+    background: #2c2c2e;
+    padding: 0.5rem 1.2rem;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    border: 1px solid transparent;
+    width: 600px;
+    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.search-container:focus-within {
+    border-color: rgb(100, 100, 100);
+    box-shadow: 0 0 15px rgba(10, 132, 255, 0.2);
+    background: #3a3a3c;
+}
+
+.logo span {
+    color: var(--primary);
+}
+.search-input {
+    background: none;
+    border: none;
+    color: white;
+    margin-left: 10px;
+    width: 100%;
+    outline: none;
+    font-size: 0.95rem;
+}
+
+/* === NAVBAR - CENTEROVANIE NA CELÚ STRÁNKU === */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 260px;                    /* šírka sidebaru */
+  width: calc(100% - 260px);      /* zaberie zvyšok obrazovky */
+  padding: 1rem 20px;
+  z-index: 100;
+  display: flex;
+  justify-content: center;        /* centrujeme obsah */
+  align-items: center;
+  background: rgba(18, 18, 18, 0.85);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.nav-content {
+  width: 100%;
+  max-width: 620px;               /* ideálna šírka search baru */
+  margin: 0 auto;
+}
+
+.search-container {
+  width: 100%;
+}
