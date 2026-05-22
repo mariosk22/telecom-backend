@@ -11,7 +11,7 @@ import java.util.Date;
 
 @Component
 public class JWTUtil {
-    private static final long EXPIRATION_TIME = 864_000_000; //24 hodin
+    private static final long EXPIRATION_TIME = 86_400_000; //24 hodin
     private final SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     public String createToken(String email){
