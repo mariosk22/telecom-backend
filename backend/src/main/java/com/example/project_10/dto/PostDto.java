@@ -9,11 +9,7 @@ import lombok.Setter;
 @Setter
 public class PostDto {
 
-    @NotBlank(message = "Title cannot be empty!")
-    @Size(min = 1, max = 255, message = "Title must be between 1 and 255 characters")
-    private String title;
-
-    @NotBlank(message = "Content cannot be empty!")
-    @Size(min = 1, max = 5000, message = "Content must be between 1 and 5000 characters")
+    @NotBlank(message = "Obsah nesmie byť prázdny")
+    @Size(min = 1, max = 1000, message = "Obsah musí mať 1 až 1000 znakov")
     private String content;
 }
