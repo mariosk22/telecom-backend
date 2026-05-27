@@ -17,12 +17,19 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '21'
+          cache: gradle
 
       - name: Grant execute permission
         run: chmod +x gradlew
 
-      - name: Build with Gradle
+      - name: Clean project
+        run: ./gradlew clean
+
+      - name: Build Spring Boot JAR
         run: ./gradlew :backend:bootJar
+
+      - name: Verify build output
+        run: ls -la backend/build/libs/
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
