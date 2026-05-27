@@ -6,6 +6,7 @@ import com.example.project_10.entity.Comment;
 import com.example.project_10.entity.User;
 import com.example.project_10.repository.CommentRepository;
 import com.example.project_10.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -60,5 +61,17 @@ public class CommentService {
         dto.setContent(comment.getContent());
         dto.setCreatedDate(comment.getCreatedAt());
         return dto;
+    }
+
+    @Transactional
+    public CommentResponseDto updateComment(Comment comment, String newContent) {
+        comment.setContent(newContent);
+        Comment savedComment = commentRepository.save(comment);
+        return toResponseDto(savedComment);
+    }
+
+    @Transactional
+    public void deleteComment(Comment comment) {
+        commentRepository.delete(comment);
     }
 }

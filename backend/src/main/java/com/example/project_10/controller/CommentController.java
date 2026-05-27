@@ -45,4 +45,15 @@ public class CommentController {
             return ResponseEntity.status(HttpStatusCode.valueOf(400)).body("Creating comment failed!");
         }
     }
+
+    @PatchMapping("/{postId}/comments/{commentId}")
+    public ResponseEntity<?> updateComment(@PathVariable Long postId, @PathVariable Long commentId, @Valid @RequestBody CommentDto request, @AuthenticationPrincipal UserDetails userDetails) {
+        try {
+            User currentUser = userRepository.findByEmail(userDetails.getUsername()).orElse(null);
+            if(currentUser == null){
+                return ResponseEntity.status(HttpStatusCode.valueOf(401)).body("User not found!");
+            }
+
+        }
+    }
 }
