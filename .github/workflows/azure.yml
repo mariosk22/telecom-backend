@@ -45,5 +45,5 @@ jobs:
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: telecom-backend-xyz123-ftfsdue9fecuc2er
+          app-name: telecom-backend-xyz123
           package: backend/build/libs/*.jar
