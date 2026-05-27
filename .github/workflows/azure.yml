@@ -1,4 +1,4 @@
-name: Build and deploy Spring Boot to Azure
+name: Build and deploy Spring Boot to Azure App Service
 
 on:
   push:
