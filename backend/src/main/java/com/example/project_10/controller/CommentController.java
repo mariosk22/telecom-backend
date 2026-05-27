@@ -40,7 +40,7 @@ public class CommentController {
         try {
             User currentUser = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new RuntimeException("Legged user not found in database!"));
             CommentResponseDto created = commentService.createComment(request, currentUser.getId(), postId);
-            return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(created);
+            return ResponseEntity.status(HttpStatusCode.valueOf(201)).body(created);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatusCode.valueOf(400)).body("Creating comment failed!");
         }

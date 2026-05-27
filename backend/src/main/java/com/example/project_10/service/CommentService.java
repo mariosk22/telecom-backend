@@ -58,7 +58,7 @@ public class CommentService {
         dto.setUserId(comment.getUserId());
         dto.setNickname(nickname);
         dto.setContent(comment.getContent());
-        dto.setCreatedDate(comment.getCreateDate());
+        dto.setCreatedDate(comment.getCreatedAt());
         return dto;
     }
 }

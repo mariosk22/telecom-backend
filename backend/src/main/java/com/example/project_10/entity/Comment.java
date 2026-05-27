@@ -30,10 +30,10 @@ public class Comment {
     private String content;
 
     @Column(name = "create_date", nullable = false, updatable = false)
-    private LocalDateTime createDate;
+    private LocalDateTime createdAt;
 
     @PrePersist
     protected void onCreate() {
-        this.createDate = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now();
     }
 }
