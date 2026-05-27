@@ -22,10 +22,23 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew :backend:build
+        run: ./gradlew :backend:bootJar
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: app
           path: backend/build/libs/*.jar
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: telecom-backend-xyz123-ftfsdue9fecuc2er
+          package: backend/build/libs/*.jar
