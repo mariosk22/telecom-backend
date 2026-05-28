@@ -1,7 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
-import "./index.css"; // ← tu sa načítajú VŠETKY tvoje štýly
+import "./index.css";
+import "./styles/create-post.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
