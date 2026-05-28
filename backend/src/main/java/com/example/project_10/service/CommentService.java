@@ -27,7 +27,7 @@ public class CommentService {
         Comment comment = new Comment();
         comment.setUserId(userId);
         comment.setPostId(postId);
-        comment.setContent(commentDto.getText());
+        comment.setContent(commentDto.getContent());
 
         Comment savedComment = commentRepository.save(comment);
         return toResponseDto(savedComment);
