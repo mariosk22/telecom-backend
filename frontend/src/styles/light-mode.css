@@ -66,12 +66,12 @@ body.light-mode .post {
     color: white;
 }
 
-body.light-mode .comments-overlay {
-    background-color: rgba(255, 255, 255, 0.1);
+.light-mode .comments-window {
+    background: white;
 }
 
 .light-mode .comment-item {
-    background-color: white;
+    background: #f2f2f7;
 }
 
 .light-mode .comment-item p {

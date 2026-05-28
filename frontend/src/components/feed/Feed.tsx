@@ -1,4 +1,3 @@
-// src/components/feed/Feed.tsx
 import { useState, useEffect } from "react";
 import Post from "./Post";
 import { posts } from "../../data/posts";
@@ -9,7 +8,6 @@ function Feed() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
 
-  // Scroll Up / Down
   const handleScrollUp = () => {
     if (currentIndex > 0) setCurrentIndex((prev) => prev - 1);
   };
@@ -18,19 +16,10 @@ function Feed() {
     if (currentIndex < posts.length - 1) setCurrentIndex((prev) => prev + 1);
   };
 
-  // Klik na post → otvor komentáre (len ak je aktívny)
   const handlePostClick = (index: number) => {
-    if (index === currentIndex) {
-      setIsCommentsOpen(true);
-    }
-  };
-
-  // Hover → zmení aktívny post
-  const handlePostHover = (index: number) => {
     setCurrentIndex(index);
   };
 
-  // Automatické vycentrovanie aktívneho postu (smooth scroll)
   useEffect(() => {
     const activePost = document.querySelector(".post.active");
     if (activePost) {
@@ -41,7 +30,6 @@ function Feed() {
     }
   }, [currentIndex]);
 
-  // Keyboard šípky (hore/dole)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "ArrowUp") {
@@ -66,7 +54,7 @@ function Feed() {
             {...post}
             isActive={index === currentIndex}
             onClick={() => handlePostClick(index)}
-            onMouseEnter={() => handlePostHover(index)}
+            onCommentClick={() => setIsCommentsOpen(true)}
           />
         ))}
       </main>

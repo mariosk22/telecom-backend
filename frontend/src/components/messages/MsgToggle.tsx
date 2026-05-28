@@ -21,7 +21,7 @@ function MsgToggle() {
         style={{ display: isOpen ? 'none' : 'flex' }}
       >
         <i className="fa-regular fa-comment-dots"></i>
-        <span>Messages</span>
+        <span>Správy</span>
       </button>
 
       <MessagesWindow isOpen={isOpen} onClose={closeWindow} />
