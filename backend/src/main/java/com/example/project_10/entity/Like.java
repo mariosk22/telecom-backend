@@ -9,12 +9,17 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "comments")
+@Table(name = "likes",
+        uniqueConstraints = @UniqueConstraint(
+                name = "uk_likes_post_user",
+                columnNames = {"post_id","user_id"}
+        )
+)
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Comment {
+public class Like {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,14 +31,11 @@ public class Comment {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Column(nullable = false,  length = 1000)
-    private String content;
-
     @Column(name = "create_date", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    private LocalDateTime createDate;
 
     @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
+    protected void OnCreate() {
+        this.createDate = LocalDateTime.now();
     }
 }
