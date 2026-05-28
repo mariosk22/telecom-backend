@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.support.JpaRepositoryImplementati
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class LikeRepository extends JpaRepositoryImplementation<Like,Long> {
+public interface LikeRepository extends JpaRepositoryImplementation<Like,Long> {
     boolean existsByPostIdAndUserId(Long postId, Long userId);
     long countByPostId(Long postId);
     void deleteByPostIdAndUserId(Long postId, Long userId);
