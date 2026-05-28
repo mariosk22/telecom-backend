@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import CreatePostModal from "../create-post/CreatePostModal";
 
 function Navbar() {
-  const [activeTab, setActiveTab] = useState<"local" | "global">("local");
   const [isLight, setIsLight] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isCreatePostOpen, setIsCreatePostOpen] = useState(false);
