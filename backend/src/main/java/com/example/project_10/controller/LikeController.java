@@ -44,7 +44,7 @@ public class LikeController {
                 return ResponseEntity.status(HttpStatusCode.valueOf(401)).body("Unauthorized!");
             }
 
-            LikeStatusDto status = likeService.getStatus(userId,postId);
+            LikeStatusDto status = likeService.likePost(userId,postId);
             return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(status);
         }catch (Exception e){
             return ResponseEntity.status(HttpStatusCode.valueOf(400)).body("Like failed!");
@@ -60,7 +60,7 @@ public class LikeController {
                 return ResponseEntity.status(HttpStatusCode.valueOf(401)).body("Unauthorized!");
             }
 
-            LikeStatusDto status = likeService.getStatus(userId,postId);
+            LikeStatusDto status = likeService.unlikePost(userId,postId);
             return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(status);
         }catch (Exception e){
             return ResponseEntity.status(HttpStatusCode.valueOf(400)).body("Unlike failed!");

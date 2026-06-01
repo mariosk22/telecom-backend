@@ -70,4 +70,17 @@ public class PostService {
         dto.setCreatedAt(post.getCreatedAt());
         return dto;
     }
+
+    public PostResponseDto updatePost(Long id, PostDto postDto, Long userId) {
+        Post post = postRepository.findById(id).orElse(null);
+        if (post == null) {
+            throw new RuntimeException("Post not found!");
+        }
+        if (!post.getUser().getId().equals(userId)) {
+            throw new RuntimeException("You are not allowed to update this post!");
+        }
+        post.setContent(postDto.getContent());
+        Post savedPost = postRepository.save(post);
+        return toResponseDto(savedPost);
+    }
 }
