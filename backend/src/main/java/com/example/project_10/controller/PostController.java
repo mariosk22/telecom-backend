@@ -77,4 +77,18 @@ public class PostController {
             return ResponseEntity.status(400).body("Deleting post failed!");
         }
     }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> updatePost(@PathVariable Long id, @Valid @RequestBody PostDto request, @AuthenticationPrincipal UserDetails userDetails) {
+        try {
+            User currentUser = userRepository.findByEmail(userDetails.getUsername()).orElse(null);
+            if (currentUser == null) {
+                return ResponseEntity.status(401).body("User not found!");
+            }
+            PostResponseDto updated = postService.updatePost(id, currentUser.getId(), request);
+            return ResponseEntity.ok(updated);
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body("Updating post failed!");
+        }
+    }
 }

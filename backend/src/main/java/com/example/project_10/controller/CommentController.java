@@ -60,7 +60,7 @@ public class CommentController {
                 return ResponseEntity.status(HttpStatusCode.valueOf(401)).body("User not found!");
             }
 
-            Optional<Comment> findComment = commentRepository.findByPostIdAndUserId(postId, commentId);
+            Optional<Comment> findComment = commentRepository.findByIdAndPostId(commentId, postId);
             if(findComment.isEmpty()){
                 return ResponseEntity.status(HttpStatusCode.valueOf(404)).body("Comment not found!");
             }
@@ -86,7 +86,7 @@ public class CommentController {
                 return ResponseEntity.status(HttpStatusCode.valueOf(401)).body("User not found!");
             }
 
-            Optional<Comment> findComment = commentRepository.findByPostIdAndUserId(postId, commentId);
+            Optional<Comment> findComment = commentRepository.findByIdAndPostId(commentId, postId);
             if(findComment.isEmpty()){
                 return ResponseEntity.status(HttpStatusCode.valueOf(404)).body("Comment not found!");
             }
