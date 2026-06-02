@@ -85,7 +85,7 @@ public class PostController {
             if (currentUser == null) {
                 return ResponseEntity.status(401).body("User not found!");
             }
-            PostResponseDto updated = postService.updatePost(id, currentUser.getId(), request);
+            PostResponseDto updated = postService.updatePost(id, request,currentUser.getId());
             return ResponseEntity.ok(updated);
         } catch (Exception e) {
             return ResponseEntity.status(400).body("Updating post failed!");

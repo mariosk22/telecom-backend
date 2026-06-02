@@ -1,3 +1,4 @@
 rootProject.name = 'telekom-team-project'
 
 include 'backend', 'frontend'
+
