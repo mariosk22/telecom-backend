@@ -28,7 +28,7 @@ public class LikeController {
     public ResponseEntity<?> getLikes(@PathVariable("id") Long postId, @AuthenticationPrincipal UserDetails userDetails){
         try {
             Long userId = getUserId(userDetails);
-            LikeStatusDto status = likeService.getStatus(userId,postId);
+            LikeStatusDto status = likeService.getStatus(postId, userId);
             return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(status);
         }catch (Exception e){
             return ResponseEntity.status(HttpStatusCode.valueOf(400)).body("Loading likes failed!");
@@ -44,7 +44,7 @@ public class LikeController {
                 return ResponseEntity.status(HttpStatusCode.valueOf(401)).body("Unauthorized!");
             }
 
-            LikeStatusDto status = likeService.likePost(userId,postId);
+            LikeStatusDto status = likeService.likePost(postId, userId);
             return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(status);
         }catch (Exception e){
             return ResponseEntity.status(HttpStatusCode.valueOf(400)).body("Like failed!");
@@ -60,7 +60,7 @@ public class LikeController {
                 return ResponseEntity.status(HttpStatusCode.valueOf(401)).body("Unauthorized!");
             }
 
-            LikeStatusDto status = likeService.unlikePost(userId,postId);
+            LikeStatusDto status = likeService.unlikePost(postId, userId);
             return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(status);
         }catch (Exception e){
             return ResponseEntity.status(HttpStatusCode.valueOf(400)).body("Unlike failed!");
