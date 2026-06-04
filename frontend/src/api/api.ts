@@ -1,4 +1,7 @@
-const API_BASE_URL = "http://localhost:9090";
+export * from "../services/api.config";
+export { default } from "../services/api.config";
+
+import { API_BASE_URL, API_ENDPOINTS, getToken } from "../services/api.config";
 
 async function request(path: string, options: RequestInit = {}) {
   const res = await fetch(`${API_BASE_URL}${path}`, {
@@ -21,7 +24,7 @@ export async function register(payload: {
   surname: string;
   birthDate: string;
 }) {
-  return request("/auth/register", {
+  return request(API_ENDPOINTS.AUTH.REGISTER, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
@@ -29,7 +32,7 @@ export async function register(payload: {
 }
 
 export async function login(payload: { email: string; password: string }) {
-  return request("/auth/login", {
+  return request(API_ENDPOINTS.AUTH.LOGIN, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
@@ -37,22 +40,24 @@ export async function login(payload: { email: string; password: string }) {
 }
 
 export async function getComments(postId: number | string, token?: string) {
-  return request(`/posts/${postId}/comments`, {
+  const t = token ?? getToken();
+  return request(`${API_ENDPOINTS.POSTS.GET_BY_ID(postId)}/comments`, {
     method: "GET",
-    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+    headers: t ? { Authorization: `Bearer ${t}` } : undefined,
   });
 }
 
 export async function createComment(
   postId: number | string,
   commentDto: { text: string },
-  token: string
+  token?: string
 ) {
+  const t = token ?? getToken();
   return request(`/posts/${postId}/comments`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
+      ...(t ? { Authorization: `Bearer ${t}` } : {}),
     },
     body: JSON.stringify(commentDto),
   });
@@ -75,11 +80,11 @@ export async function createPost(
 ) {
   // attempt backend call
   try {
-    return await request(`/posts`, {
+    return await request(API_ENDPOINTS.POSTS.CREATE, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...((token ?? getToken()) ? { Authorization: `Bearer ${token ?? getToken()}` } : {}),
       },
       body: JSON.stringify(post),
     });
