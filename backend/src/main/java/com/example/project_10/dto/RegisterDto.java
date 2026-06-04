@@ -4,12 +4,19 @@ import jakarta.validation.constraints.*;
 
 
 import java.time.LocalDate;
+import java.time.Period;
 
 public class RegisterDto {
 
     @NotNull(message = "Date of birth cannot be empty!")
-    @Past(message = "Date of birth cannot be in past!")
+    @Past(message = "Date of birth must be in the past!")
     private LocalDate birthDate;
+
+    @AssertTrue(message = "You must be at least 15 years old!")
+    public boolean isAgeValid() {
+        if (birthDate == null) return true;
+        return Period.between(birthDate, LocalDate.now()).getYears() >= 15;
+    }
 
     @NotBlank(message = "Email cannot be empty!")
     @Email(message = "Invalid email format!")
