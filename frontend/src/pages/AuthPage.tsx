@@ -5,7 +5,6 @@ import { login as apiLogin, register as apiRegister } from "../api/api";
 // Password must be at least 8 characters, contain at least one uppercase letter, one number and one special character
 const passwordRegex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$/;
 const MIN_AGE = 15;
-const API_BASE_URL = "http://localhost:9090";
 
 const AuthPage: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");

@@ -8,7 +8,7 @@ export const API_ENDPOINTS = {
   },
   POSTS: {
     GET_ALL: '/posts',
-    GET_BY_ID: (id: number) => `/posts/${id}`,
+    GET_BY_ID: (id: number | string) => `/posts/${id}`,
     GET_BY_USER: (userId: number) => `/posts/user/${userId}`,
     CREATE: '/posts',
     DELETE: (id: number) => `/posts/${id}`,
