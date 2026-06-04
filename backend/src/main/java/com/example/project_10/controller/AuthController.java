@@ -47,4 +47,5 @@ public class AuthController {
             return ResponseEntity.status(HttpStatusCode.valueOf(401)).body("Login failed!");
         }
     }
+
 }
