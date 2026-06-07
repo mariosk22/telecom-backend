@@ -14,6 +14,11 @@ import java.time.LocalDateTime;
 public class PostResponseDto {
     private Long id;
     private Long userId;
+    private String title;
     private String content;
+    private String image;
+    private String nickname;
+    private long likes;
+    private long comments;
     private LocalDateTime createdAt;
 }
