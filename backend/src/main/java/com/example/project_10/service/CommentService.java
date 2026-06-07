@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -30,29 +32,47 @@ public class CommentService {
         comment.setContent(commentDto.getContent());
 
         Comment savedComment = commentRepository.save(comment);
-        return toResponseDto(savedComment);
+
+        Optional<User> user = userRepository.findById(userId);
+        String nickname;
+        if (user.isPresent()) {
+            nickname = user.get().getNickname();
+        } else {
+            nickname = "Unknown";
+        }
+        return toResponseDto(savedComment, nickname);
     }
 
     public List<CommentResponseDto> getComments(Long postId) {
         List<Comment> comments = commentRepository.findByPostId(postId);
+
+        List<Long> userIds = new ArrayList<>();
+        for (Comment comment : comments) {
+            if (!userIds.contains(comment.getUserId())) {
+                userIds.add(comment.getUserId());
+            }
+        }
+
+        List<User> users = userRepository.findAllById(userIds);
+        Map<Long, String> nicknames = new HashMap<>();
+        for (User user : users) {
+            nicknames.put(user.getId(), user.getNickname());
+        }
+
         List<CommentResponseDto> listDto = new ArrayList<>();
         for (Comment comment : comments) {
-            CommentResponseDto dto = toResponseDto(comment);
-            listDto.add(dto);
+            String nickname;
+            if (nicknames.containsKey(comment.getUserId())) {
+                nickname = nicknames.get(comment.getUserId());
+            } else {
+                nickname = "Unknown";
+            }
+            listDto.add(toResponseDto(comment, nickname));
         }
         return listDto;
     }
 
-    private CommentResponseDto toResponseDto(Comment comment) {
-        Optional<User> optionalUser = userRepository.findById(comment.getUserId());
-        String nickname;
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            nickname = user.getNickname();
-        } else {
-            nickname = "Unknown";
-        }
-
+    private CommentResponseDto toResponseDto(Comment comment, String nickname) {
         CommentResponseDto dto = new CommentResponseDto();
         dto.setId(comment.getId());
         dto.setPostId(comment.getPostId());
@@ -67,7 +87,15 @@ public class CommentService {
     public CommentResponseDto updateComment(Comment comment, String newContent) {
         comment.setContent(newContent);
         Comment savedComment = commentRepository.save(comment);
-        return toResponseDto(savedComment);
+
+        Optional<User> user = userRepository.findById(comment.getUserId());
+        String nickname;
+        if (user.isPresent()) {
+            nickname = user.get().getNickname();
+        } else {
+            nickname = "Unknown";
+        }
+        return toResponseDto(savedComment, nickname);
     }
 
     @Transactional
