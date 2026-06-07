@@ -32,7 +32,7 @@ public class AuthController {
             userService.register(request);
             return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(Map.of("message", "Register successfully!"));
         }catch(Exception e){
-            return ResponseEntity.status(HttpStatusCode.valueOf(400)).body("Register failed!");
+            return ResponseEntity.status(HttpStatusCode.valueOf(400)).body(Map.of("message", "Register failed!"));
         }
 
     }
@@ -44,7 +44,13 @@ public class AuthController {
             String token = jwtUtil.createToken(request.getEmail());
             return  ResponseEntity.status(HttpStatusCode.valueOf(200)).body(Map.of("token", token));
         }catch(Exception e){
-            return ResponseEntity.status(HttpStatusCode.valueOf(401)).body("Login failed!");
+            return ResponseEntity.status(HttpStatusCode.valueOf(401)).body(Map.of("message", "Login failed!"));
         }
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout() {
+        return ResponseEntity.ok(Map.of("message", "Logout successfully!"));
+    }
+
 }

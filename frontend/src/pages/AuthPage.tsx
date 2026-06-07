@@ -1,9 +1,10 @@
 // src/pages/AuthPage.tsx
 import React, { useState } from "react";
+import { login as apiLogin, register as apiRegister } from "../api/api";
 
+// Password must be at least 8 characters, contain at least one uppercase letter, one number and one special character
 const passwordRegex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$/;
 const MIN_AGE = 15;
-const API_BASE_URL = "http://localhost:9090";
 
 const AuthPage: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
@@ -72,45 +73,31 @@ const AuthPage: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
     if (activeTab === "login") {
       if (!validateLogin()) return;
 
-      const response = await fetch(`${API_BASE_URL}/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: loginEmail,
-          password: loginPassword,
-        }),
-      });
-
-      if (!response.ok) {
+      try {
+        const res: any = await apiLogin({ email: loginEmail, password: loginPassword });
+        if (res?.token) {
+          localStorage.setItem("token", res.token);
+        }
+        onSuccess();
+      } catch (err) {
         return;
       }
-
-      onSuccess();
     } else {
       if (!validateRegister()) return;
 
-      const response = await fetch(`${API_BASE_URL}/auth/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+      try {
+        await apiRegister({
           email: regEmail,
           name: regName,
           nickname: regUsername,
           password: regPassword,
           surname: regSurname,
           birthDate: regAge,
-        }),
-      });
-
-      if (!response.ok) {
+        });
+        onSuccess();
+      } catch (err) {
         return;
       }
-
-      onSuccess();
     }
   };
 

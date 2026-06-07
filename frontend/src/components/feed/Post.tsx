@@ -1,4 +1,3 @@
-// src/components/feed/Post.tsx
 import { useState } from "react";
 
 type PostProps = {
@@ -14,7 +13,7 @@ type PostProps = {
   liked?: boolean;
   isActive?: boolean;
   onClick?: () => void;
-  onMouseEnter?: () => void;
+  onCommentClick?: () => void;
 };
 
 function Post({
@@ -29,7 +28,7 @@ function Post({
   liked: initialLiked = false,
   isActive = false,
   onClick,
-  onMouseEnter,
+  onCommentClick,
 }: PostProps) {
   const [liked, setLiked] = useState(initialLiked);
   const [likes, setLikes] = useState(initialLikes);
@@ -47,7 +46,6 @@ function Post({
     <article
       className={`post ${isActive ? "active" : ""}`}
       onClick={onClick}
-      onMouseEnter={onMouseEnter}
     >
       <div className="post-header">
         <div className="user-info">
@@ -57,7 +55,7 @@ function Post({
             <span>{time}</span>
           </div>
         </div>
-        <button className="btn-follow">Follow</button>
+        <button className="btn-follow">Sledovať</button>
       </div>
 
       <div className="post-content">
@@ -82,14 +80,16 @@ function Post({
             <i className={`fa-${liked ? "solid" : "regular"} fa-heart`}></i>{" "}
             {likes}
           </button>
-          <button className="action-btn">
+          <button
+            className="action-btn"
+            onClick={(e) => {
+              e.stopPropagation();
+              onCommentClick?.();
+            }}
+          >
             <i className="fa-regular fa-comment"></i> {comments}
           </button>
-          <button className="action-btn">
-            <i className="fa-regular fa-paper-plane"></i>
-          </button>
         </div>
-        <i className="fa-regular fa-bookmark"></i>
       </div>
     </article>
   );

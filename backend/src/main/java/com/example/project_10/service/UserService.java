@@ -4,7 +4,7 @@ import com.example.project_10.dto.RegisterDto;
 import com.example.project_10.entity.User;
 import com.example.project_10.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -34,12 +34,10 @@ public class UserService {
     }
 
     public User login(String email, String password) {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("Invalid email"));
-        boolean passwordIsValid = encoder.matches(password, user.getPassword());
-        if(passwordIsValid) {
-            return user;
-        }else {
-            throw new UsernameNotFoundException("Invalid password");
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new BadCredentialsException("Invalid email or password"));
+        if (!encoder.matches(password, user.getPassword())) {
+            throw new BadCredentialsException("Invalid email or password");
         }
+        return user;
     }
 }
