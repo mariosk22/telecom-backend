@@ -29,7 +29,7 @@ const getAuthHeaders = (): HeadersInit => {
     'Content-Type': 'application/json',
   };
   if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
+    (headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
   }
   return headers;
 };
@@ -43,43 +43,9 @@ class PostService {
         headers: getAuthHeaders(),
       }
     );
-
     if (!response.ok) {
       throw new Error('Loading posts failed!');
     }
-
-    return await response.json();
-  }
-
-  async getPostById(id: number): Promise<PostResponseDto> {
-    const response = await fetch(
-      `${API_BASE_URL}${API_ENDPOINTS.POSTS.GET_BY_ID(id)}`,
-      {
-        method: 'GET',
-        headers: getAuthHeaders(),
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error('Loading post failed!');
-    }
-
-    return await response.json();
-  }
-
-  async getPostsByUserId(userId: number): Promise<PostResponseDto[]> {
-    const response = await fetch(
-      `${API_BASE_URL}${API_ENDPOINTS.POSTS.GET_BY_USER(userId)}`,
-      {
-        method: 'GET',
-        headers: getAuthHeaders(),
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error('Loading user posts failed!');
-    }
-
     return await response.json();
   }
 
@@ -92,11 +58,9 @@ class PostService {
         body: JSON.stringify(data),
       }
     );
-
     if (!response.ok) {
       throw new Error('Creating post failed!');
     }
-
     return await response.json();
   }
 
@@ -108,7 +72,6 @@ class PostService {
         headers: getAuthHeaders(),
       }
     );
-
     if (!response.ok) {
       throw new Error('Deleting post failed!');
     }

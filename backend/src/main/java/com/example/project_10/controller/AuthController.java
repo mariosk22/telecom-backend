@@ -34,7 +34,6 @@ public class AuthController {
         }catch(Exception e){
             return ResponseEntity.status(HttpStatusCode.valueOf(400)).body(Map.of("message", "Register failed!"));
         }
-
     }
 
     @PostMapping("/login")
@@ -42,7 +41,11 @@ public class AuthController {
         try {
             User user = userService.login(request.getEmail(), request.getPassword());
             String token = jwtUtil.createToken(request.getEmail());
-            return  ResponseEntity.status(HttpStatusCode.valueOf(200)).body(Map.of("token", token));
+            return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(Map.of(
+                    "token", token,
+                    "nickname", user.getNickname(),
+                    "name", user.getName()
+            ));
         }catch(Exception e){
             return ResponseEntity.status(HttpStatusCode.valueOf(401)).body(Map.of("message", "Login failed!"));
         }
