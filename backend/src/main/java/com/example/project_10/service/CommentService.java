@@ -31,8 +31,6 @@ public class CommentService {
         comment.setPostId(postId);
         comment.setContent(commentDto.getContent());
 
-        Comment savedComment = commentRepository.save(comment);
-
         Optional<User> user = userRepository.findById(userId);
         String nickname;
         if (user.isPresent()) {
@@ -40,6 +38,8 @@ public class CommentService {
         } else {
             nickname = "Unknown";
         }
+
+        Comment savedComment = commentRepository.save(comment);
         return toResponseDto(savedComment, nickname);
     }
 
