@@ -15,4 +15,4 @@ sync_to_github:
     - git remote remove github || true
     - git remote add github https://oauth2:${GITHUB_TOKEN}@github.com/mariosk22/telecom-backend.git
 
-    - git push github HEAD:gitlab-sync
+    - git push github HEAD:refs/heads/gitlab-sync
