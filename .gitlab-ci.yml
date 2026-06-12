@@ -4,7 +4,7 @@ stages:
 sync_to_github:
   stage: sync
   tags:
-    - docker-runner
+    - beby-runner
   only:
     - main
   script:
