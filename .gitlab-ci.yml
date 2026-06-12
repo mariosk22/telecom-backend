@@ -5,6 +5,7 @@ sync_to_github:
   stage: sync
   tags:
     - beby-runner
+  image: alpine/git
   only:
     - main
   script:
