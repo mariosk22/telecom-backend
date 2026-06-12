@@ -1,0 +1,12 @@
+stages:
+  - sync
+
+sync_to_github:
+  stage: sync
+  only:
+    - main
+  script:
+    - git config --global user.email "gitlab-ci@example.com"
+    - git config --global user.name "GitLab CI"
+    - git remote add github https://oauth2:${GITHUB_TOKEN}@github.com/mariosk22/telecom-backend.git
+    - git push github main
