@@ -105,7 +105,7 @@ public class CommentController {
             }
 
             commentService.deleteComment(comment);
-            return ResponseEntity.status(HttpStatusCode.valueOf(200)).body("Deleted comment successfully!");
+            return ResponseEntity.status(HttpStatusCode.valueOf(200)).body("Deleted comment successfully!"); //zmenit na httpCode na 204
         }catch (Exception e){
             return ResponseEntity.status(HttpStatusCode.valueOf(400)).body("Deleting comment failed!");
         }
