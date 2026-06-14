@@ -63,7 +63,7 @@ function CommentsOverlay({ isOpen, postId, onClose }: CommentsOverlayProps) {
           "Content-Type": "application/json",
           ...(token ? { "Authorization": `Bearer ${token}` } : {}),
         },
-        body: JSON.stringify({ text: newComment.trim() }),
+        body: JSON.stringify({ content: newComment.trim() }),
       });
       if (!response.ok) return;
       const created = await response.json();

@@ -23,6 +23,9 @@ public class JWTFilter extends OncePerRequestFilter {
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
 
+    @Autowired
+    private TokenBlacklistService tokenBlacklistService;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         String header = request.getHeader("Authorization");
@@ -36,7 +39,7 @@ public class JWTFilter extends OncePerRequestFilter {
         }
         String token = header.substring(7);
         boolean isTokenValid = jwtUtil.isValidToken(token);
-        if(!isTokenValid) {
+        if(!isTokenValid || tokenBlacklistService.isBlacklisted(token)) {
             chain.doFilter(request, response);
             return;
         }

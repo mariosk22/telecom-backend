@@ -3,7 +3,7 @@ package com.example.project_10.service;
 import com.example.project_10.dto.LikeStatusDto;
 import com.example.project_10.entity.Like;
 import com.example.project_10.repository.LikeRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +30,7 @@ public class LikeService {
         return status(postId, userId);
     }
 
+    @Transactional(readOnly = true)
     public LikeStatusDto getStatus(Long postId, Long userId) {
         return status(postId, userId);
     }
