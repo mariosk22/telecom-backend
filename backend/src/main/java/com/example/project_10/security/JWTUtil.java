@@ -45,4 +45,13 @@ public class JWTUtil {
             return false;
         }
     }
+
+    public Date getExpiration(String token){
+        return Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getExpiration();
+    }
 }

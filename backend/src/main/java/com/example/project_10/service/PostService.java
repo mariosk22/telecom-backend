@@ -106,4 +106,8 @@ public class PostService {
         Post savedPost = postRepository.save(post);
         return toResponseDto(savedPost);
     }
+
+    public boolean existsById(Long id) {
+        return postRepository.existsById(id);
+    }
 }

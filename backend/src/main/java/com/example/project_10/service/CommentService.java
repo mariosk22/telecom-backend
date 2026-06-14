@@ -104,4 +104,8 @@ public class CommentService {
     public void deleteComment(Comment comment) {
         commentRepository.delete(comment);
     }
+
+    public Optional<Comment> findByIdAndPostId(Long commentId, Long postId) {
+        return commentRepository.findByIdAndPostId(commentId, postId);
+    }
 }
