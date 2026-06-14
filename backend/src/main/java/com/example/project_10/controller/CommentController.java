@@ -101,7 +101,7 @@ public class CommentController {
             }
 
             commentService.deleteComment(comment);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Deleted comment successfully!");
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Deleting comment failed!");
         }
