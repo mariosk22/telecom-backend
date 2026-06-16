@@ -14,7 +14,7 @@ public class CorsConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration cfg = new CorsConfiguration();
-        cfg.addAllowedOrigin("https://your-frontend.azurestaticapps.net");
+        cfg.addAllowedOrigin("https://ashy-dune-0f79f2603.7.azurestaticapps.net");
         cfg.addAllowedOrigin("http://localhost:5173");
         cfg.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         cfg.setAllowedHeaders(List.of("*"));
