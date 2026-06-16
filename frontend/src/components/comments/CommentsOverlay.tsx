@@ -128,6 +128,7 @@ function CommentsOverlay({ isOpen, postId, onClose }: CommentsOverlayProps) {
           </button>
         </div>
       </div>
+    </div>  
   );
 }
 
