@@ -1,8 +1,9 @@
 import React, { useState } from "react";
+import { login as apiLogin, register as apiRegister } from "../api/api";
 
+// Password must be at least 8 characters, contain at least one uppercase letter, one number and one special character
 const passwordRegex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$/;
 const MIN_AGE = 15;
-const API_BASE_URL = "http://localhost:9090";
 
 const AuthPage: React.FC<{ onSuccess: () => void }> = ({ onSuccess }: { onSuccess: () => void }) => {
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
@@ -62,52 +63,31 @@ const AuthPage: React.FC<{ onSuccess: () => void }> = ({ onSuccess }: { onSucces
     e.preventDefault();
     if (activeTab === "login") {
       if (!validateLogin()) return;
+
       try {
-        const response = await fetch(`${API_BASE_URL}/auth/login`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: loginEmail, password: loginPassword }),
-        });
-        if (!response.ok) {
-          setErrors({ loginEmail: "Nesprávny email alebo heslo" });
-          return;
+        const res: any = await apiLogin({ email: loginEmail, password: loginPassword });
+        if (res?.token) {
+          localStorage.setItem("token", res.token);
         }
-        const data = await response.json();
-        if (data?.token) {
-          localStorage.setItem("token", data.token);
-          localStorage.setItem("userEmail", loginEmail);
-        }
-        if (data?.nickname) localStorage.setItem("userNickname", data.nickname);
-        if (data?.name) localStorage.setItem("userName", data.name);
         onSuccess();
-      } catch {
-        setErrors({ loginEmail: "Chyba pripojenia k serveru" });
+      } catch (err) {
+        return;
       }
     } else {
       if (!validateRegister()) return;
+
       try {
-        const response = await fetch(`${API_BASE_URL}/auth/register`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: regEmail,
-            name: regName,
-            nickname: regUsername,
-            password: regPassword,
-            surname: regSurname,
-            birthDate: regAge,
-          }),
+        await apiRegister({
+          email: regEmail,
+          name: regName,
+          nickname: regUsername,
+          password: regPassword,
+          surname: regSurname,
+          birthDate: regAge,
         });
-        if (!response.ok) {
-          setErrors({ email: "Registrácia zlyhala, skús iný email" });
-          return;
-        }
-        localStorage.setItem("userNickname", regUsername);
-        localStorage.setItem("userName", regName);
-        setActiveTab("login");
-        setErrors({});
-      } catch {
-        setErrors({ email: "Chyba pripojenia k serveru" });
+        onSuccess();
+      } catch (err) {
+        return;
       }
     }
   };

@@ -29,7 +29,7 @@ public class Post {
     @Column(nullable = false, length = 1000)
     private String content;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "LONGTEXT")
     private String image;
 
     @ManyToOne(fetch = FetchType.LAZY)

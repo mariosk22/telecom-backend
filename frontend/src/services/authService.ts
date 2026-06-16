@@ -7,11 +7,8 @@ export interface LoginDto {
 
 export interface RegisterDto {
   email: string;
-  name: string;
-  nickname: string;
   password: string;
-  surname: string;
-  birthDate: string;
+  username?: string;
 }
 
 export interface LoginResponse {
@@ -24,10 +21,13 @@ class AuthService {
       `${API_BASE_URL}${API_ENDPOINTS.AUTH.REGISTER}`,
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify(data),
       }
     );
+
     if (!response.ok) {
       throw new Error('Register failed!');
     }
@@ -38,16 +38,19 @@ class AuthService {
       `${API_BASE_URL}${API_ENDPOINTS.AUTH.LOGIN}`,
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify(data),
       }
     );
+
     if (!response.ok) {
       throw new Error('Login failed!');
     }
+
     const result: LoginResponse = await response.json();
     setToken(result.token);
-    localStorage.setItem('userEmail', data.email);
     return result.token;
   }
 }

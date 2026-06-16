@@ -1,0 +1,49 @@
+name: Build and deploy Spring Boot to Azure App Service
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: gradle
+
+      - name: Grant execute permission
+        run: chmod +x gradlew
+
+      - name: Clean project
+        run: ./gradlew clean
+
+      - name: Build Spring Boot JAR
+        run: ./gradlew :backend:bootJar
+
+      - name: Verify build output
+        run: ls -la backend/build/libs/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app
+          path: backend/build/libs/*.jar
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: telecom-backend-xyz123
+          package: backend/build/libs/*.jar
