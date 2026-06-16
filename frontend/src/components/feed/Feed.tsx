@@ -1,10 +1,28 @@
 import { useState, useEffect } from "react";
 import Post from "./Post";
-import { posts } from "../../data/posts";
 import { ScrollButtons } from "../scroll-buttons";
 import CommentsOverlay from "../comments/CommentsOverlay";
 
-function Feed() {
+type PostType = {
+  id: number;
+  title: string;
+  content: string;
+  image?: string;
+  likes: number;
+  comments: number;
+  user: string;
+  avatar: string;
+  time: string;
+};
+
+type FeedProps = {
+  onRegisterRefresh?: (fn: () => void) => void;
+};
+
+const API_BASE_URL = "http://localhost:9090";
+
+function Feed({ onRegisterRefresh }: FeedProps) {
+  const [posts, setPosts] = useState<PostType[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
 
@@ -23,10 +41,7 @@ function Feed() {
   useEffect(() => {
     const activePost = document.querySelector(".post.active");
     if (activePost) {
-      activePost.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
+      activePost.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   }, [currentIndex]);
 
@@ -40,10 +55,19 @@ function Feed() {
         handleScrollDown();
       }
     };
-
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentIndex]);
+  }, [currentIndex, posts]);
+
+  if (posts.length === 0) {
+    return (
+        <main className="feed">
+          <p style={{ color: "var(--text-dim)", textAlign: "center", marginTop: "100px" }}>
+            Zatiaľ žiadne príspevky
+          </p>
+        </main>
+    );
+  }
 
   return (
     <>

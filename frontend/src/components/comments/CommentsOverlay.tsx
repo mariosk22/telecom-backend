@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 
 type Comment = {
+  id: number;
   user: string;
   text: string;
   isOwn?: boolean;
@@ -8,20 +9,13 @@ type Comment = {
 
 type CommentsOverlayProps = {
   isOpen: boolean;
+  postId: number;
   onClose: () => void;
 };
 
-const randomComments: Comment[] = [
-  { user: "Peter Š.", text: "Úplne súhlasím, toto je presne ten problém, o ktorom som hovoril." },
-  { user: "Mária K.", text: "Mne sa to stalo minulý semester, stačilo napísať na študijné." },
-  { user: "Jakub L.", text: "To sa fakt nikdy nepoučia? 😂" },
-  { user: "Anonym", text: "Neviete niekto, či je toto povinné aj pre externistov?" },
-  { user: "Lucia M.", text: "Skvelý post, vďaka za info! Pomohlo mi to sa zorientovať." },
-  { user: "Andrej T.", text: "Toto v skutočnosti funguje inak, pozri si smernicu dekana 2/2023." },
-  { user: "Simona H.", text: "Niekto na pivo po prednáške, aby sme to rozdýchali? 🍺" },
-];
+const API_BASE_URL = "http://localhost:9090";
 
-function CommentsOverlay({ isOpen, onClose }: CommentsOverlayProps) {
+function CommentsOverlay({ isOpen, postId, onClose }: CommentsOverlayProps) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
@@ -44,6 +38,7 @@ function CommentsOverlay({ isOpen, onClose }: CommentsOverlayProps) {
       const shuffled = [...randomComments].sort(() => 0.5 - Math.random());
       setComments(shuffled.slice(0, count));
     }
+    return () => { document.body.style.overflow = ""; };
   }, [isOpen]);
 
   useEffect(() => {
@@ -133,7 +128,6 @@ function CommentsOverlay({ isOpen, onClose }: CommentsOverlayProps) {
           </button>
         </div>
       </div>
-    </div>
   );
 }
 
