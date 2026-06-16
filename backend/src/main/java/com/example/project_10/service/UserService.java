@@ -8,6 +8,8 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.util.Optional;
+
 
 @Service
 public class UserService {
@@ -39,5 +41,9 @@ public class UserService {
             throw new BadCredentialsException("Invalid email or password");
         }
         return user;
+    }
+
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 }

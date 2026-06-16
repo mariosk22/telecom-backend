@@ -68,11 +68,14 @@ public class PostService {
         return toResponseDto(post);
     }
 
+    @Transactional
     public void deletePost(Long id, Long userId) {
         Post post = postRepository.findById(id).orElseThrow(() -> new RuntimeException("Post not found!"));
         if (!post.getUser().getId().equals(userId)) {
             throw new RuntimeException("You do not have permission to delete this post!");
         }
+        commentRepository.deleteByPostId(id);
+        likeRepository.deleteByPostId(id);
         postRepository.delete(post);
     }
 
@@ -105,5 +108,9 @@ public class PostService {
         }
         Post savedPost = postRepository.save(post);
         return toResponseDto(savedPost);
+    }
+
+    public boolean existsById(Long id) {
+        return postRepository.existsById(id);
     }
 }
