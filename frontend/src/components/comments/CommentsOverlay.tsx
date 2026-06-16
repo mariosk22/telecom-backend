@@ -15,6 +15,16 @@ type CommentsOverlayProps = {
 
 const API_BASE_URL = "http://localhost:9090";
 
+const randomComments: Comment[] = [
+  { id: 1, user: "Peter Š.", text: "Úplne súhlasím, toto je presne ten problém, o ktorom som hovoril." },
+  { id: 2, user: "Mária K.", text: "Mne sa to stalo minulý semester, stačilo napísať na študijné." },
+  { id: 3, user: "Jakub L.", text: "To sa fakt nikdy nepoučia? 😂" },
+  { id: 4, user: "Anonym", text: "Neviete niekto, či je toto povinné aj pre externistov?" },
+  { id: 5, user: "Lucia M.", text: "Skvelý post, vďaka za info! Pomohlo mi to sa zorientovať." },
+  { id: 6, user: "Andrej T.", text: "Toto v skutočnosti funguje inak, pozri si smernicu dekana 2/2023." },
+  { id: 7, user: "Simona H.", text: "Niekto na pivo po prednáške, aby sme to rozdýchali? 🍺" },
+];
+
 function CommentsOverlay({ isOpen, postId, onClose }: CommentsOverlayProps) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
