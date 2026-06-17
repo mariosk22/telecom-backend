@@ -1,0 +1,22 @@
+stages:
+  - sync
+
+sync_to_github:
+  stage: sync
+  tags:
+    - beby-runner
+  image: alpine/git
+  only:
+    - main
+  variables:
+    GIT_DEPTH: "0"
+  script:
+    - git config --global user.email "gitlab-ci@example.com"
+    - git config --global user.name "GitLab CI"
+
+    - git remote remove github || true
+    - git remote add github https://oauth2:${GITHUB_TOKEN}@github.com/mariosk22/telecom-backend.git
+
+    - git fetch --unshallow || true
+
+    - git push github HEAD:refs/heads/gitlab-sync
