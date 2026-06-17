@@ -17,11 +17,12 @@ type PostType = {
 
 type FeedProps = {
   onRegisterRefresh?: (fn: () => void) => void;
+  onStats?: (s: { posts: number; likes: number; comments: number }) => void;
 };
 
 const API_BASE_URL = "http://localhost:9090";
 
-function Feed({ onRegisterRefresh }: FeedProps) {
+function Feed({ onRegisterRefresh, onStats }: FeedProps) {
   const [posts, setPosts] = useState<PostType[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
@@ -36,17 +37,25 @@ function Feed({ onRegisterRefresh }: FeedProps) {
       });
       if (!response.ok) return;
       const data = await response.json();
-      setPosts(data.map((p: any) => ({
+      const mapped: PostType[] = data.map((p: any) => ({
         id: p.id,
         title: p.title,
         content: p.content,
         image: p.image,
         likes: p.likes ?? 0,
         comments: p.comments ?? 0,
-        user: p.user?.nickname ?? p.user?.email ?? "Anonym",
-        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.user?.nickname ?? p.id}`,
+        user: p.nickname ?? p.user?.nickname ?? p.user?.email ?? "Anonym",
+        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.nickname ?? p.user?.nickname ?? p.id}`,
         time: p.createdAt ? new Date(p.createdAt).toLocaleDateString("sk-SK") : "",
-      })));
+      }));
+      setPosts(mapped);
+      if (onStats) {
+        onStats({
+          posts: mapped.length,
+          likes: mapped.reduce((sum, p) => sum + (p.likes || 0), 0),
+          comments: mapped.reduce((sum, p) => sum + (p.comments || 0), 0),
+        });
+      }
     } catch {
       return;
     }

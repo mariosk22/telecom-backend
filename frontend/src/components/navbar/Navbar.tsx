@@ -49,16 +49,19 @@ function Navbar({ onPostCreated }: NavbarProps) {
   return (
       <>
         <nav className="navbar">
-          <button
-              className="create-post-btn"
-              onClick={() => setIsCreatePostOpen(true)}
-          >
-            <i className="fa-solid fa-plus"></i>
-            Pridať príspevok
-          </button>
+          <div className="navbar-left">
+            <div className="logo">Student<span>Connect</span></div>
+            <button
+                className="create-post-btn"
+                onClick={() => setIsCreatePostOpen(true)}
+            >
+              <i className="fa-solid fa-plus"></i>
+              <span className="create-post-label">Pridať príspevok</span>
+            </button>
+          </div>
 
           <div className="nav-content">
-            <form className="search-container">
+            <form className="search-container" onSubmit={(e) => e.preventDefault()}>
               <i className="fa-solid fa-magnifying-glass"></i>
               <input
                   className="search-input"

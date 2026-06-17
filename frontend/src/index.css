@@ -1,11 +1,9 @@
-/* STYLES */
 @import './styles/styles.css';
 @import './styles/navbar.css';
-@import './styles/sidebar.css';
 @import './styles/light-mode.css';
 @import './styles/post.css';
+@import './styles/rail.css';
 @import './styles/comments.css';
-@import './styles/messages.css';
 @import './styles/auth.css';
 
 @import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css';

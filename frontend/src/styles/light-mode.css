@@ -1,4 +1,3 @@
-/* LIGHT MODE */
 body.light-mode {
     --bg-dark: #f2f2f7;
     --card-bg: #ffffff;
@@ -8,14 +7,6 @@ body.light-mode {
     --border-color: rgba(0, 0, 0, 0.1);
     background-image: none;
     background-color: var(--bg-dark);
-}
-
-body.light-mode .sidebar {
-    background-color: white;
-}
-
-body.light-mode .category {
-    color: black;
 }
 
 body.light-mode .navbar {
@@ -61,11 +52,6 @@ body.light-mode .post {
     color: black;
 }
 
-.light-mode .btn-follow:hover {
-    background-color: black;
-    color: white;
-}
-
 .light-mode .comments-window {
     background: white;
 }
@@ -76,4 +62,16 @@ body.light-mode .post {
 
 .light-mode .comment-item p {
     color: black;
+}
+
+body.light-mode .aurora {
+    opacity: 0.5;
+}
+
+body.light-mode .scroll button {
+    color: black;
+}
+
+body.light-mode .scroll button:hover {
+    color: white;
 }

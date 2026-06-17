@@ -55,7 +55,6 @@ function Post({
             <span>{time}</span>
           </div>
         </div>
-        <button className="btn-follow">Sledovať</button>
       </div>
 
       <div className="post-content">

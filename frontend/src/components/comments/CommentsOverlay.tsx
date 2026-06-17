@@ -23,14 +23,19 @@ function CommentsOverlay({ isOpen, postId, onClose }: CommentsOverlayProps) {
 
   useEffect(() => {
     if (isOpen && postId) {
+      const myNickname = localStorage.getItem("userNickname");
       fetch(`${API_BASE_URL}/posts/${postId}/comments`)
           .then((res) => res.json())
           .then((data) => {
-            setComments(data.map((c: any) => ({
-              id: c.id,
-              user: c.nickname ?? c.user ?? "Anonym",
-              text: c.content ?? c.text ?? "",
-            })));
+            setComments(data.map((c: any) => {
+              const author = c.nickname ?? c.user ?? "Anonym";
+              return {
+                id: c.id,
+                user: author,
+                text: c.content ?? c.text ?? "",
+                isOwn: myNickname != null && author === myNickname,
+              };
+            }));
           })
           .catch(() => setComments([]));
     }
@@ -79,13 +84,29 @@ function CommentsOverlay({ isOpen, postId, onClose }: CommentsOverlayProps) {
     }
   };
 
-  const handleEditSave = (id: number) => {
-    if (!editText.trim()) return;
-    setComments((prev) =>
-        prev.map((c) => (c.id === id ? { ...c, text: editText.trim() } : c))
-    );
-    setEditingId(null);
-    setEditText("");
+  const handleEditSave = async (id: number) => {
+    const trimmed = editText.trim();
+    if (!trimmed) return;
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(`${API_BASE_URL}/posts/${postId}/comments/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { "Authorization": `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ content: trimmed }),
+      });
+      if (!response.ok) return;
+      const updated = await response.json();
+      setComments((prev) =>
+          prev.map((c) => (c.id === id ? { ...c, text: updated.content ?? updated.text ?? trimmed } : c))
+      );
+      setEditingId(null);
+      setEditText("");
+    } catch {
+      return;
+    }
   };
 
   if (!isOpen) return null;
