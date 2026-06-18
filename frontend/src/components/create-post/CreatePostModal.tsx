@@ -168,16 +168,7 @@ function CreatePostModal({ isOpen, onClose, onPostCreated }: CreatePostModalProp
             </button>
           </div>
         </div>
-
-        <div className="modal-footer">
-          <button className="modal-cancel-btn" onClick={onClose}>Zrušiť</button>
-          <button className="modal-submit-btn" onClick={handleSubmit}>
-            <i className="fa-solid fa-paper-plane"></i>
-            Zverejniť
-          </button>
-        </div>
       </div>
-    </div>
   );
 }
 
