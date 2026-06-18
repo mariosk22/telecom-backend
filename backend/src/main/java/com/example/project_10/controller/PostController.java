@@ -3,6 +3,7 @@ package com.example.project_10.controller;
 import com.example.project_10.dto.PostDto;
 import com.example.project_10.dto.PostResponseDto;
 import com.example.project_10.entity.User;
+import com.example.project_10.exception.ApiException;
 import com.example.project_10.service.UserService;
 import com.example.project_10.service.PostService;
 import jakarta.validation.Valid;
@@ -26,70 +27,36 @@ public class PostController {
     private UserService userService;
 
     @GetMapping
-    public ResponseEntity<?> getAllPosts() {
-        try {
-            List<PostResponseDto> posts = postService.getAllPosts();
-            return ResponseEntity.status(HttpStatus.OK).body(posts);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Loading posts failed!");
-        }
+    public ResponseEntity<List<PostResponseDto>> getAllPosts() {
+        return ResponseEntity.ok(postService.getAllPosts());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getPostById(@PathVariable Long id) {
-        try {
-            PostResponseDto post = postService.getPostById(id);
-            return ResponseEntity.status(HttpStatus.OK).body(post);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Loading post failed!");
-        }
+    public ResponseEntity<PostResponseDto> getPostById(@PathVariable Long id) {
+        return ResponseEntity.ok(postService.getPostById(id));
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<?> getPostsByUser(@PathVariable Long userId) {
-        try {
-            List<PostResponseDto> posts = postService.getPostsByUserId(userId);
-            return ResponseEntity.status(HttpStatus.OK).body(posts);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Loading user posts failed!");
-        }
+    public ResponseEntity<List<PostResponseDto>> getPostsByUser(@PathVariable Long userId) {
+        return ResponseEntity.ok(postService.getPostsByUserId(userId));
     }
 
     @PostMapping
-    public ResponseEntity<?> createPost(@Valid @RequestBody PostDto request, @AuthenticationPrincipal UserDetails userDetails) {
-        try {
-            User currentUser = userService.findByEmail(userDetails.getUsername())
-                    .orElseThrow(() -> new RuntimeException("Logged user not found in database!"));
-            PostResponseDto created = postService.createPost(request, currentUser.getId());
-            return ResponseEntity.status(HttpStatus.CREATED).body(created);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Creating post failed!");
-        }
+    public ResponseEntity<PostResponseDto> createPost(@Valid @RequestBody PostDto request, @AuthenticationPrincipal UserDetails userDetails) {
+        User currentUser = userService.findByEmail(userDetails.getUsername()).orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "User not found!"));
+        return ResponseEntity.status(HttpStatus.CREATED).body(postService.createPost(request, currentUser.getId()));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletePost(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
-        try {
-            User currentUser = userService.findByEmail(userDetails.getUsername())
-                    .orElseThrow(() -> new RuntimeException("Logged user not found in database!"));
-            postService.deletePost(id, currentUser.getId());
-            return ResponseEntity.status(HttpStatus.OK).body("Post deleted successfully!");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Deleting post failed!");
-        }
+    public ResponseEntity<Void> deletePost(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
+        User currentUser = userService.findByEmail(userDetails.getUsername()).orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "User not found!"));
+        postService.deletePost(id, currentUser.getId());
+        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<?> updatePost(@PathVariable Long id, @Valid @RequestBody PostDto request, @AuthenticationPrincipal UserDetails userDetails) {
-        try {
-            User currentUser = userService.findByEmail(userDetails.getUsername()).orElse(null);
-            if (currentUser == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found!");
-            }
-            PostResponseDto updated = postService.updatePost(id, request, currentUser.getId());
-            return ResponseEntity.status(HttpStatus.OK).body(updated);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Updating post failed!");
-        }
+    public ResponseEntity<PostResponseDto> updatePost(@PathVariable Long id, @Valid @RequestBody PostDto request, @AuthenticationPrincipal UserDetails userDetails) {
+        User currentUser = userService.findByEmail(userDetails.getUsername()).orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "User not found!"));
+        return ResponseEntity.ok(postService.updatePost(id, request, currentUser.getId()));
     }
 }

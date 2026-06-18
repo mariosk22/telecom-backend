@@ -4,6 +4,7 @@ import com.example.project_10.dto.CommentDto;
 import com.example.project_10.dto.CommentResponseDto;
 import com.example.project_10.entity.Comment;
 import com.example.project_10.entity.User;
+import com.example.project_10.exception.ApiException;
 import com.example.project_10.service.CommentService;
 import com.example.project_10.service.PostService;
 import com.example.project_10.service.UserService;
@@ -16,7 +17,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/posts")
@@ -32,78 +32,38 @@ public class CommentController {
     private PostService postService;
 
     @GetMapping("/{id}/comments")
-    public ResponseEntity<?> getComments(@PathVariable("id") Long postId) {
-        try {
-            List<CommentResponseDto> comments = commentService.getComments(postId);
-            return ResponseEntity.status(HttpStatus.OK).body(comments);
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Loading comments failed!");
-        }
+    public ResponseEntity<List<CommentResponseDto>> getComments(@PathVariable("id") Long postId) {
+        return ResponseEntity.ok(commentService.getComments(postId));
     }
 
     @PostMapping("/{id}/comments")
-    public ResponseEntity<?> createComment(@PathVariable("id") Long postId, @Valid @RequestBody CommentDto request, @AuthenticationPrincipal UserDetails userDetails) {
-        try {
-            if (!postService.existsById(postId)) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Post not found!");
-            }
-
-            User currentUser = userService.findByEmail(userDetails.getUsername()).orElseThrow(() -> new RuntimeException("Legged user not found in database!"));
-            CommentResponseDto created = commentService.createComment(request, currentUser.getId(), postId);
-            return ResponseEntity.status(HttpStatus.CREATED).body(created);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Creating comment failed!");
+    public ResponseEntity<CommentResponseDto> createComment(@PathVariable("id") Long postId, @Valid @RequestBody CommentDto request, @AuthenticationPrincipal UserDetails userDetails) {
+        if (!postService.existsById(postId)) {
+            throw new ApiException(HttpStatus.NOT_FOUND, "Post not found!");
         }
+        User currentUser = userService.findByEmail(userDetails.getUsername()).orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "User not found!"));
+        CommentResponseDto created = commentService.createComment(request, currentUser.getId(), postId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PatchMapping("/{postId}/comments/{commentId}")
-    public ResponseEntity<?> updateComment(@PathVariable Long postId, @PathVariable Long commentId, @Valid @RequestBody CommentDto request, @AuthenticationPrincipal UserDetails userDetails) {
-        try {
-            User currentUser = userService.findByEmail(userDetails.getUsername()).orElse(null);
-            if(currentUser == null){
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found!");
-            }
-
-            Optional<Comment> findComment = commentService.findByIdAndPostId(commentId, postId);
-            if(findComment.isEmpty()){
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Comment not found!");
-            }
-
-            Comment comment = findComment.get();
-
-            if(!comment.getUserId().equals(currentUser.getId())){
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not allowed to update comment!");
-            }
-
-            CommentResponseDto updated = commentService.updateComment(comment, request.getContent());
-            return ResponseEntity.status(HttpStatus.OK).body(updated);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Updating comment failed!");
+    public ResponseEntity<CommentResponseDto> updateComment(@PathVariable Long postId, @PathVariable Long commentId, @Valid @RequestBody CommentDto request, @AuthenticationPrincipal UserDetails userDetails) {
+        User currentUser = userService.findByEmail(userDetails.getUsername()).orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "User not found!"));
+        Comment comment = commentService.findByIdAndPostId(commentId, postId).orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Comment not found!"));
+        if (!comment.getUserId().equals(currentUser.getId())) {
+            throw new ApiException(HttpStatus.FORBIDDEN, "You are not allowed to update comment!");
         }
+        return ResponseEntity.ok(commentService.updateComment(comment, request.getContent()));
     }
 
     @DeleteMapping("/{postId}/comments/{commentId}")
-    public ResponseEntity<?> deleteComment(@PathVariable Long postId, @PathVariable Long commentId,  @AuthenticationPrincipal UserDetails userDetails) {
-        try {
-            User currentUser = userService.findByEmail(userDetails.getUsername()).orElse(null);
-            if(currentUser == null){
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found!");
-            }
-
-            Optional<Comment> findComment = commentService.findByIdAndPostId(commentId, postId);
-            if(findComment.isEmpty()){
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Comment not found!");
-            }
-            Comment comment = findComment.get();
-
-            if(!comment.getUserId().equals(currentUser.getId())){
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not allowed to delete comment!");
-            }
-
-            commentService.deleteComment(comment);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Deleting comment failed!");
+    public ResponseEntity<Void> deleteComment(@PathVariable Long postId, @PathVariable Long commentId, @AuthenticationPrincipal UserDetails userDetails) {
+        User currentUser = userService.findByEmail(userDetails.getUsername()).orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "User not found!"));
+        Comment comment = commentService.findByIdAndPostId(commentId, postId).orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Comment not found!"));
+        if (!comment.getUserId().equals(currentUser.getId())) {
+            throw new ApiException(HttpStatus.FORBIDDEN, "You are not allowed to delete comment!");
         }
+        commentService.deleteComment(comment);
+        return ResponseEntity.noContent().build();
     }
 }
