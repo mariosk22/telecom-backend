@@ -24,19 +24,19 @@ function CommentsOverlay({ isOpen, postId, onClose, onCountChange }: CommentsOve
 
   useEffect(() => {
     if (isOpen && postId) {
-      const token = localStorage.getItem("token");
-      const currentNickname = localStorage.getItem("userNickname") ?? "";
-      fetch(`${API_BASE_URL}/posts/${postId}/comments`, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-      })
+      const myNickname = localStorage.getItem("userNickname");
+      fetch(`${API_BASE_URL}/posts/${postId}/comments`)
           .then((res) => res.json())
           .then((data) => {
-            setComments(data.map((c: any) => ({
-              id: c.id,
-              user: c.nickname ?? "Anonym",
-              text: c.content ?? "",
-              isOwn: currentNickname !== "" && c.nickname === currentNickname,
-            })));
+            setComments(data.map((c: any) => {
+              const author = c.nickname ?? c.user ?? "Anonym";
+              return {
+                id: c.id,
+                user: author,
+                text: c.content ?? c.text ?? "",
+                isOwn: myNickname != null && author === myNickname,
+              };
+            }));
           })
           .catch(() => setComments([]));
     }
@@ -86,43 +86,29 @@ function CommentsOverlay({ isOpen, postId, onClose, onCountChange }: CommentsOve
     }
   };
 
-  const handleDelete = async (id: number) => {
-    const token = localStorage.getItem("token");
-    try {
-      const response = await fetch(`${API_BASE_URL}/posts/${postId}/comments/${id}`, {
-        method: "DELETE",
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-      });
-      if (!response.ok) return;
-      setComments((prev) => prev.filter((c) => c.id !== id));
-      if (editingId === id) setEditingId(null);
-      onCountChange?.(-1);
-    } catch {
-      return;
-    }
-  };
-
   const handleEditSave = async (id: number) => {
-    if (!editText.trim()) return;
+    const trimmed = editText.trim();
+    if (!trimmed) return;
     const token = localStorage.getItem("token");
     try {
       const response = await fetch(`${API_BASE_URL}/posts/${postId}/comments/${id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          ...(token ? { "Authorization": `Bearer ${token}` } : {}),
         },
-        body: JSON.stringify({ content: editText.trim() }),
+        body: JSON.stringify({ content: trimmed }),
       });
       if (!response.ok) return;
+      const updated = await response.json();
+      setComments((prev) =>
+          prev.map((c) => (c.id === id ? { ...c, text: updated.content ?? updated.text ?? trimmed } : c))
+      );
+      setEditingId(null);
+      setEditText("");
     } catch {
       return;
     }
-    setComments((prev) =>
-        prev.map((c) => (c.id === id ? { ...c, text: editText.trim() } : c))
-    );
-    setEditingId(null);
-    setEditText("");
   };
 
   if (!isOpen) return null;

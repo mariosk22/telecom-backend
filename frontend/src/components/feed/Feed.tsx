@@ -18,12 +18,12 @@ type PostType = {
 
 type FeedProps = {
   onRegisterRefresh?: (fn: () => void) => void;
-  searchQuery?: string;
+  onStats?: (s: { posts: number; likes: number; comments: number }) => void;
 };
 
 const API_BASE_URL = "http://localhost:9090";
 
-function Feed({ onRegisterRefresh, searchQuery = "" }: FeedProps) {
+function Feed({ onRegisterRefresh, onStats }: FeedProps) {
   const [posts, setPosts] = useState<PostType[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
@@ -35,36 +35,25 @@ function Feed({ onRegisterRefresh, searchQuery = "" }: FeedProps) {
       const response = await fetch(`${API_BASE_URL}/posts`, { headers: authHeaders });
       if (!response.ok) return;
       const data = await response.json();
-      // pre každý príspevok dotiahni reálny stav lajkov (count + či ho lajkol prihlásený používateľ)
-      const mapped: PostType[] = await Promise.all(
-        data.map(async (p: any) => {
-          let likes = p.likes ?? 0;
-          let liked = false;
-          try {
-            const likeRes = await fetch(`${API_BASE_URL}/posts/${p.id}/likes`, { headers: authHeaders });
-            if (likeRes.ok) {
-              const status = await likeRes.json();
-              likes = status.count ?? likes;
-              liked = !!status.liked;
-            }
-          } catch {
-            // ponecháme východiskové hodnoty z výpisu príspevkov
-          }
-          return {
-            id: p.id,
-            title: p.title,
-            content: p.content,
-            image: p.image,
-            likes,
-            liked,
-            comments: p.comments ?? 0,
-            user: p.nickname ?? "Anonym",
-            avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.nickname ?? p.id}`,
-            time: p.createdAt ? new Date(p.createdAt).toLocaleDateString("sk-SK") : "",
-          };
-        })
-      );
+      const mapped: PostType[] = data.map((p: any) => ({
+        id: p.id,
+        title: p.title,
+        content: p.content,
+        image: p.image,
+        likes: p.likes ?? 0,
+        comments: p.comments ?? 0,
+        user: p.nickname ?? p.user?.nickname ?? p.user?.email ?? "Anonym",
+        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.nickname ?? p.user?.nickname ?? p.id}`,
+        time: p.createdAt ? new Date(p.createdAt).toLocaleDateString("sk-SK") : "",
+      }));
       setPosts(mapped);
+      if (onStats) {
+        onStats({
+          posts: mapped.length,
+          likes: mapped.reduce((sum, p) => sum + (p.likes || 0), 0),
+          comments: mapped.reduce((sum, p) => sum + (p.comments || 0), 0),
+        });
+      }
     } catch {
       return;
     }

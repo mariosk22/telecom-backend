@@ -64,13 +64,16 @@ function Navbar({ onPostCreated, onLogout, searchQuery = "", onSearchChange }: N
   return (
       <>
         <nav className="navbar">
-          <button
-              className="create-post-btn"
-              onClick={() => setIsCreatePostOpen(true)}
-          >
-            <i className="fa-solid fa-plus"></i>
-            Pridať príspevok
-          </button>
+          <div className="navbar-left">
+            <div className="logo">Student<span>Connect</span></div>
+            <button
+                className="create-post-btn"
+                onClick={() => setIsCreatePostOpen(true)}
+            >
+              <i className="fa-solid fa-plus"></i>
+              <span className="create-post-label">Pridať príspevok</span>
+            </button>
+          </div>
 
           <div className="nav-content">
             <form className="search-container" onSubmit={(e) => e.preventDefault()}>

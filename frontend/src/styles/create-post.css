@@ -15,11 +15,23 @@
     border-radius: 20px;
     width: 100%;
     max-width: 560px;
+    max-height: 90vh;
+    overflow-y: auto;
     padding: 28px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
     display: flex;
     flex-direction: column;
     gap: 20px;
+}
+
+@media (max-width: 480px) {
+    .modal-backdrop {
+        padding: 12px;
+    }
+
+    .modal-window {
+        padding: 20px;
+    }
 }
 
 .modal-header {
