@@ -98,7 +98,14 @@
     align-items: center;
 }
 
-.comment-edit-btn {
+.comment-item-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.comment-edit-btn,
+.comment-delete-btn {
     background: none;
     border: none;
     color: var(--text-dim);
@@ -111,6 +118,11 @@
 
 .comment-edit-btn:hover {
     color: var(--primary);
+    background: var(--card-bg);
+}
+
+.comment-delete-btn:hover {
+    color: #ff453a;
     background: var(--card-bg);
 }
 

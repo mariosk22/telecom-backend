@@ -11,11 +11,12 @@ type CommentsOverlayProps = {
   isOpen: boolean;
   postId: number;
   onClose: () => void;
+  onCountChange?: (delta: number) => void;
 };
 
 const API_BASE_URL = "http://localhost:9090";
 
-function CommentsOverlay({ isOpen, postId, onClose }: CommentsOverlayProps) {
+function CommentsOverlay({ isOpen, postId, onClose, onCountChange }: CommentsOverlayProps) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -74,11 +75,12 @@ function CommentsOverlay({ isOpen, postId, onClose }: CommentsOverlayProps) {
       const created = await response.json();
       setComments((prev) => [...prev, {
         id: created.id,
-        user: created.nickname ?? created.user ?? "Ja",
-        text: created.content ?? created.text ?? newComment.trim(),
+        user: created.nickname ?? "Ja",
+        text: created.content ?? newComment.trim(),
         isOwn: true,
       }]);
       setNewComment("");
+      onCountChange?.(1);
     } catch {
       return;
     }
@@ -130,12 +132,20 @@ function CommentsOverlay({ isOpen, postId, onClose }: CommentsOverlayProps) {
                   <div className="comment-item-header">
                     <h4>{comment.user}</h4>
                     {comment.isOwn && editingId !== comment.id && (
-                        <button
-                            className="comment-edit-btn"
-                            onClick={() => { setEditingId(comment.id); setEditText(comment.text); }}
-                        >
-                          <i className="fa-solid fa-pen"></i>
-                        </button>
+                        <div className="comment-item-actions">
+                          <button
+                              className="comment-edit-btn"
+                              onClick={() => { setEditingId(comment.id); setEditText(comment.text); }}
+                          >
+                            <i className="fa-solid fa-pen"></i>
+                          </button>
+                          <button
+                              className="comment-delete-btn"
+                              onClick={() => handleDelete(comment.id)}
+                          >
+                            <i className="fa-solid fa-trash"></i>
+                          </button>
+                        </div>
                     )}
                   </div>
                   {editingId === comment.id ? (

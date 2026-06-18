@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Post from "./Post";
 import { ScrollButtons } from "../scroll-buttons";
 import CommentsOverlay from "../comments/CommentsOverlay";
@@ -9,6 +9,7 @@ type PostType = {
   content: string;
   image?: string;
   likes: number;
+  liked: boolean;
   comments: number;
   user: string;
   avatar: string;
@@ -29,12 +30,9 @@ function Feed({ onRegisterRefresh, onStats }: FeedProps) {
 
   const fetchPosts = async () => {
     const token = localStorage.getItem("token");
+    const authHeaders: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
     try {
-      const response = await fetch(`${API_BASE_URL}/posts`, {
-        headers: {
-          ...(token ? { "Authorization": `Bearer ${token}` } : {}),
-        },
-      });
+      const response = await fetch(`${API_BASE_URL}/posts`, { headers: authHeaders });
       if (!response.ok) return;
       const data = await response.json();
       const mapped: PostType[] = data.map((p: any) => ({
@@ -66,12 +64,35 @@ function Feed({ onRegisterRefresh, onStats }: FeedProps) {
     if (onRegisterRefresh) onRegisterRefresh(fetchPosts);
   }, []);
 
+  // filtrovanie podľa hľadaného výrazu (nadpis alebo obsah)
+  const filteredPosts = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return posts;
+    return posts.filter(
+      (p) => p.title.toLowerCase().includes(q) || p.content.toLowerCase().includes(q)
+    );
+  }, [posts, searchQuery]);
+
+  // pri zmene hľadania zacni od prvého výsledku
+  useEffect(() => {
+    setCurrentIndex(0);
+  }, [searchQuery]);
+
+  // udrž počet komentárov na príspevku v synchronizácii s overlayom
+  const adjustCommentCount = (postId: number, delta: number) => {
+    setPosts((prev) =>
+      prev.map((p) =>
+        p.id === postId ? { ...p, comments: Math.max(0, p.comments + delta) } : p
+      )
+    );
+  };
+
   const handleScrollUp = () => {
     if (currentIndex > 0) setCurrentIndex((prev) => prev - 1);
   };
 
   const handleScrollDown = () => {
-    if (currentIndex < posts.length - 1) setCurrentIndex((prev) => prev + 1);
+    if (currentIndex < filteredPosts.length - 1) setCurrentIndex((prev) => prev + 1);
   };
 
   const handlePostClick = (index: number) => {
@@ -97,22 +118,24 @@ function Feed({ onRegisterRefresh, onStats }: FeedProps) {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentIndex, posts]);
+  }, [currentIndex, filteredPosts]);
 
-  if (posts.length === 0) {
+  if (filteredPosts.length === 0) {
     return (
         <main className="feed">
           <p style={{ color: "var(--text-dim)", textAlign: "center", marginTop: "100px" }}>
-            Zatiaľ žiadne príspevky
+            {posts.length === 0 ? "Zatiaľ žiadne príspevky" : "Nič sa nenašlo"}
           </p>
         </main>
     );
   }
 
+  const activePostId = filteredPosts[currentIndex]?.id;
+
   return (
       <>
         <main className="feed">
-          {posts.map((post, index) => (
+          {filteredPosts.map((post, index) => (
               <Post
                   key={post.id}
                   {...post}
@@ -127,8 +150,11 @@ function Feed({ onRegisterRefresh, onStats }: FeedProps) {
 
         <CommentsOverlay
             isOpen={isCommentsOpen}
-            postId={posts[currentIndex]?.id}
+            postId={activePostId}
             onClose={() => setIsCommentsOpen(false)}
+            onCountChange={(delta) => {
+              if (activePostId != null) adjustCommentCount(activePostId, delta);
+            }}
         />
       </>
   );

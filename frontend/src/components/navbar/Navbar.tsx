@@ -1,18 +1,25 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import CreatePostModal from "../create-post/CreatePostModal";
 
 type NavbarProps = {
   onPostCreated?: () => void;
+  onLogout?: () => void;
+  searchQuery?: string;
+  onSearchChange?: (value: string) => void;
 };
 
-function Navbar({ onPostCreated }: NavbarProps) {
+function Navbar({ onPostCreated, onLogout, searchQuery = "", onSearchChange }: NavbarProps) {
   const [isLight, setIsLight] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isCreatePostOpen, setIsCreatePostOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
 
   const nickname = localStorage.getItem("userNickname") ?? "";
   const name = localStorage.getItem("userName") ?? "";
   const email = localStorage.getItem("userEmail") ?? "";
+  // identita zobrazená vpravo hore – rovnaká ako autor na príspevku (nickname)
+  const displayName = nickname || name || email;
+  const avatarSeed = nickname || email;
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
@@ -24,6 +31,18 @@ function Navbar({ onPostCreated }: NavbarProps) {
       document.body.classList.remove("light-mode");
     }
   }, []);
+
+  // zatvor profilové menu pri kliknutí mimo neho
+  useEffect(() => {
+    if (!isProfileOpen) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+        setIsProfileOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isProfileOpen]);
 
   const toggleTheme = () => {
     const newIsLight = !isLight;
@@ -39,11 +58,7 @@ function Navbar({ onPostCreated }: NavbarProps) {
 
   const handleLogout = () => {
     setIsProfileOpen(false);
-    localStorage.removeItem("token");
-    localStorage.removeItem("userEmail");
-    localStorage.removeItem("userNickname");
-    localStorage.removeItem("userName");
-    window.location.reload();
+    onLogout?.();
   };
 
   return (
@@ -67,6 +82,8 @@ function Navbar({ onPostCreated }: NavbarProps) {
                   className="search-input"
                   type="search"
                   placeholder="Hľadať problém..."
+                  value={searchQuery}
+                  onChange={(e) => onSearchChange?.(e.target.value)}
               />
             </form>
           </div>
@@ -76,22 +93,30 @@ function Navbar({ onPostCreated }: NavbarProps) {
               <i className={`fa-solid ${isLight ? "fa-sun" : "fa-moon"}`}></i>
             </button>
 
-            <div className="profile-wrapper">
-              <img
-                  src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${nickname || email}`}
-                  alt="profil"
-                  className="profile-avatar"
+            <div className="profile-wrapper" ref={profileRef}>
+              <button
+                  type="button"
+                  className="profile-trigger"
                   onClick={() => setIsProfileOpen((prev) => !prev)}
-              />
+              >
+                {displayName && (
+                    <span className="profile-name-inline">{displayName}</span>
+                )}
+                <img
+                    src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${avatarSeed}`}
+                    alt="profil"
+                    className="profile-avatar"
+                />
+              </button>
               {isProfileOpen && (
                   <div className="profile-dropdown">
                     <div className="profile-dropdown-header">
                       <img
-                          src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${nickname || email}`}
+                          src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${avatarSeed}`}
                           alt="profil"
                       />
                       <div>
-                        <p className="profile-name">{name || nickname || email}</p>
+                        <p className="profile-name">{displayName}</p>
                         <p className="profile-email">{email}</p>
                       </div>
                     </div>
