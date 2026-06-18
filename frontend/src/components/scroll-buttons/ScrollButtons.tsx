@@ -1,4 +1,3 @@
-// src/components/scroll-buttons/ScrollButtons.tsx
 type ScrollButtonsProps = {
   onUp: () => void;
   onDown: () => void;

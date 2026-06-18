@@ -11,25 +11,36 @@ type CommentsOverlayProps = {
   isOpen: boolean;
   postId: number;
   onClose: () => void;
+  onCountChange?: (delta: number) => void;
 };
 
 const API_BASE_URL = "http://localhost:9090";
 
-const randomComments: Comment[] = [
-  { id: 1, user: "Peter Š.", text: "Úplne súhlasím, toto je presne ten problém, o ktorom som hovoril." },
-  { id: 2, user: "Mária K.", text: "Mne sa to stalo minulý semester, stačilo napísať na študijné." },
-  { id: 3, user: "Jakub L.", text: "To sa fakt nikdy nepoučia? 😂" },
-  { id: 4, user: "Anonym", text: "Neviete niekto, či je toto povinné aj pre externistov?" },
-  { id: 5, user: "Lucia M.", text: "Skvelý post, vďaka za info! Pomohlo mi to sa zorientovať." },
-  { id: 6, user: "Andrej T.", text: "Toto v skutočnosti funguje inak, pozri si smernicu dekana 2/2023." },
-  { id: 7, user: "Simona H.", text: "Niekto na pivo po prednáške, aby sme to rozdýchali? 🍺" },
-];
-
-function CommentsOverlay({ isOpen, postId, onClose }: CommentsOverlayProps) {
+function CommentsOverlay({ isOpen, postId, onClose, onCountChange }: CommentsOverlayProps) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editText, setEditText] = useState("");
+
+  useEffect(() => {
+    if (isOpen && postId) {
+      const myNickname = localStorage.getItem("userNickname");
+      fetch(`${API_BASE_URL}/posts/${postId}/comments`)
+          .then((res) => res.json())
+          .then((data) => {
+            setComments(data.map((c: any) => {
+              const author = c.nickname ?? c.user ?? "Anonym";
+              return {
+                id: c.id,
+                user: author,
+                text: c.content ?? c.text ?? "",
+                isOwn: myNickname != null && author === myNickname,
+              };
+            }));
+          })
+          .catch(() => setComments([]));
+    }
+  }, [isOpen, postId]);
 
   useEffect(() => {
     if (isOpen) {
@@ -61,17 +72,54 @@ function CommentsOverlay({ isOpen, postId, onClose }: CommentsOverlayProps) {
 
   const handleSubmit = () => {
     if (!newComment.trim()) return;
-    setComments((prev) => [...prev, { user: "Ja", text: newComment.trim(), isOwn: true }]);
-    setNewComment("");
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(`${API_BASE_URL}/posts/${postId}/comments`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { "Authorization": `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ content: newComment.trim() }),
+      });
+      if (!response.ok) return;
+      const created = await response.json();
+      setComments((prev) => [...prev, {
+        id: created.id,
+        user: created.nickname ?? "Ja",
+        text: created.content ?? newComment.trim(),
+        isOwn: true,
+      }]);
+      setNewComment("");
+      onCountChange?.(1);
+    } catch {
+      return;
+    }
   };
 
-  const handleEditSave = (index: number) => {
-    if (!editText.trim()) return;
-    setComments((prev) =>
-      prev.map((c, i) => (i === index ? { ...c, text: editText.trim() } : c))
-    );
-    setEditingIndex(null);
-    setEditText("");
+  const handleEditSave = async (id: number) => {
+    const trimmed = editText.trim();
+    if (!trimmed) return;
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(`${API_BASE_URL}/posts/${postId}/comments/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { "Authorization": `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ content: trimmed }),
+      });
+      if (!response.ok) return;
+      const updated = await response.json();
+      setComments((prev) =>
+          prev.map((c) => (c.id === id ? { ...c, text: updated.content ?? updated.text ?? trimmed } : c))
+      );
+      setEditingId(null);
+      setEditText("");
+    } catch {
+      return;
+    }
   };
 
   if (!isOpen) return null;
@@ -86,25 +134,33 @@ function CommentsOverlay({ isOpen, postId, onClose }: CommentsOverlayProps) {
           </button>
         </div>
 
-        <div className="comments-body">
-          {comments.map((comment, index) => (
-            <div key={index} className="comment-item">
-              <div className="comment-item-header">
-                <h4>{comment.user}</h4>
-                {comment.isOwn && editingIndex !== index && (
-                  <button
-                    className="comment-edit-btn"
-                    onClick={() => {
-                      setEditingIndex(index);
-                      setEditText(comment.text);
-                    }}
-                  >
-                    <i className="fa-solid fa-pen"></i>
-                  </button>
-                )}
-              </div>
-              {editingIndex === index ? (
-                <div className="comment-edit-area">
+          <div className="comments-body">
+            {comments.length === 0 && (
+                <p style={{ color: "var(--text-dim)", textAlign: "center" }}>Zatiaľ žiadne komentáre</p>
+            )}
+            {comments.map((comment) => (
+                <div key={comment.id} className="comment-item">
+                  <div className="comment-item-header">
+                    <h4>{comment.user}</h4>
+                    {comment.isOwn && editingId !== comment.id && (
+                        <div className="comment-item-actions">
+                          <button
+                              className="comment-edit-btn"
+                              onClick={() => { setEditingId(comment.id); setEditText(comment.text); }}
+                          >
+                            <i className="fa-solid fa-pen"></i>
+                          </button>
+                          <button
+                              className="comment-delete-btn"
+                              onClick={() => handleDelete(comment.id)}
+                          >
+                            <i className="fa-solid fa-trash"></i>
+                          </button>
+                        </div>
+                    )}
+                  </div>
+                  {editingId === comment.id ? (
+                      <div className="comment-edit-area">
                   <textarea
                     value={editText}
                     onChange={(e) => setEditText(e.target.value)}

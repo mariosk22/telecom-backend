@@ -93,135 +93,162 @@ const AuthPage: React.FC<{ onSuccess: () => void }> = ({ onSuccess }: { onSucces
   };
 
   return (
-      <div className="auth-container">
-        <div className="tab-group">
-          <button
-              className={`tab ${activeTab === "login" ? "active" : ""}`}
-              onClick={() => { setActiveTab("login"); setErrors({}); }}
-          >
-            Login
-          </button>
-          <button
-              className={`tab ${activeTab === "register" ? "active" : ""}`}
-              onClick={() => { setActiveTab("register"); setErrors({}); }}
-          >
-            Register
-          </button>
+      <div className="auth-shell">
+        <div className="auth-brand">
+          <div className="auth-brand-blob auth-brand-blob-1"></div>
+          <div className="auth-brand-blob auth-brand-blob-2"></div>
+          <div className="auth-brand-content">
+            <div className="auth-logo">Student<span>Connect</span></div>
+            <h1 className="auth-tagline">Miesto, kde študenti riešia problémy spoločne.</h1>
+            <p className="auth-subtagline">
+              Opýtaj sa na čokoľvek, pomôž ostatným a uč sa rýchlejšie — všetko na jednom mieste.
+            </p>
+            <ul className="auth-features">
+              <li><i className="fa-solid fa-circle-question"></i> Pýtaj sa na čokoľvek zo školy</li>
+              <li><i className="fa-solid fa-comments"></i> Odpovede priamo od komunity</li>
+              <li><i className="fa-solid fa-heart"></i> Zbieraj a označuj užitočné rady</li>
+            </ul>
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit}>
-          {activeTab === "login" ? (
-              <>
-                <div className="input-group">
-                  <label>E-mail</label>
-                  <input
-                      type="email"
-                      value={loginEmail}
-                      onChange={(e) => setLoginEmail(e.target.value)}
-                      placeholder="Zadajte e-mail"
-                      required
-                  />
-                  {errors.loginEmail && <p className="text-red-500">{errors.loginEmail}</p>}
-                </div>
-                <div className="input-group">
-                  <label>Heslo</label>
-                  <input
-                      type="password"
-                      value={loginPassword}
-                      onChange={(e) => setLoginPassword(e.target.value)}
-                      placeholder="••••••••"
-                      required
-                  />
-                  {errors.loginPassword && <p className="text-red-500">{errors.loginPassword}</p>}
-                </div>
-              </>
-          ) : (
-              <>
-                <div className="input-group">
-                  <label>Meno</label>
-                  <input
-                      type="text"
-                      value={regName}
-                      onChange={(e) => setRegName(e.target.value)}
-                      placeholder="Zadajte meno"
-                      required
-                  />
-                  {errors.name && <p className="text-red-500">{errors.name}</p>}
-                </div>
-                <div className="input-group">
-                  <label>Priezvisko</label>
-                  <input
-                      type="text"
-                      value={regSurname}
-                      onChange={(e) => setRegSurname(e.target.value)}
-                      placeholder="Zadajte priezvisko"
-                      required
-                  />
-                  {errors.surname && <p className="text-red-500">{errors.surname}</p>}
-                </div>
-                <div className="input-group">
-                  <label>Prezývka</label>
-                  <input
-                      type="text"
-                      value={regUsername}
-                      onChange={(e) => setRegUsername(e.target.value)}
-                      placeholder="Zadajte prezývku"
-                      required
-                  />
-                  {errors.username && <p className="text-red-500">{errors.username}</p>}
-                </div>
-                <div className="input-group">
-                  <label>E-mail</label>
-                  <input
-                      type="email"
-                      value={regEmail}
-                      onChange={(e) => setRegEmail(e.target.value)}
-                      placeholder="your@email.com"
-                      required
-                  />
-                  {errors.email && <p className="text-red-500">{errors.email}</p>}
-                </div>
-                <div className="input-group">
-                  <label>Dátum narodenia</label>
-                  <input
-                      type="date"
-                      value={regAge}
-                      onChange={(e) => setRegAge(e.target.value)}
-                      required
-                  />
-                  {errors.age && <p className="text-red-500">{errors.age}</p>}
-                </div>
-                <div className="input-group">
-                  <label>Heslo</label>
-                  <input
-                      type="password"
-                      value={regPassword}
-                      onChange={(e) => setRegPassword(e.target.value)}
-                      placeholder="••••••••"
-                      required
-                  />
-                  {errors.password && <p className="text-red-500">{errors.password}</p>}
-                </div>
-                <div className="input-group">
-                  <label>Potvrďte heslo</label>
-                  <input
-                      type="password"
-                      value={regConfirm}
-                      onChange={(e) => setRegConfirm(e.target.value)}
-                      placeholder="••••••••"
-                      required
-                  />
-                  {errors.confirm && <p className="text-red-500">{errors.confirm}</p>}
-                </div>
-              </>
-          )}
-          <button
-              type="submit"
-              className={`submit-btn ${activeTab === "register" ? "register-variant" : ""}`}
-          >
-            {activeTab === "login" ? "Prihlásiť sa" : "Vytvoriť účet"}
-          </button>
-        </form>
+        <div className="auth-form-side">
+          <div className="auth-container">
+            <div className="auth-mobile-logo">Student<span>Connect</span></div>
+
+            <div className="tab-group">
+              <button
+                  className={`tab ${activeTab === "login" ? "active" : ""}`}
+                  onClick={() => { setActiveTab("login"); setErrors({}); }}
+              >
+                Prihlásenie
+              </button>
+              <button
+                  className={`tab ${activeTab === "register" ? "active" : ""}`}
+                  onClick={() => { setActiveTab("register"); setErrors({}); }}
+              >
+                Registrácia
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit}>
+              {activeTab === "login" ? (
+                  <>
+                    <div className="input-group">
+                      <label>E-mail</label>
+                      <input
+                          type="email"
+                          value={loginEmail}
+                          onChange={(e) => setLoginEmail(e.target.value)}
+                          placeholder="Zadajte e-mail"
+                          required
+                      />
+                      {errors.loginEmail && <p className="text-red-500">{errors.loginEmail}</p>}
+                    </div>
+                    <div className="input-group">
+                      <label>Heslo</label>
+                      <input
+                          type="password"
+                          value={loginPassword}
+                          onChange={(e) => setLoginPassword(e.target.value)}
+                          placeholder="••••••••"
+                          required
+                      />
+                      {errors.loginPassword && <p className="text-red-500">{errors.loginPassword}</p>}
+                    </div>
+                  </>
+              ) : (
+                  <>
+                    <div className="auth-row">
+                      <div className="input-group">
+                        <label>Meno</label>
+                        <input
+                            type="text"
+                            value={regName}
+                            onChange={(e) => setRegName(e.target.value)}
+                            placeholder="Zadajte meno"
+                            required
+                        />
+                        {errors.name && <p className="text-red-500">{errors.name}</p>}
+                      </div>
+                      <div className="input-group">
+                        <label>Priezvisko</label>
+                        <input
+                            type="text"
+                            value={regSurname}
+                            onChange={(e) => setRegSurname(e.target.value)}
+                            placeholder="Zadajte priezvisko"
+                            required
+                        />
+                        {errors.surname && <p className="text-red-500">{errors.surname}</p>}
+                      </div>
+                    </div>
+                    <div className="input-group">
+                      <label>Prezývka</label>
+                      <input
+                          type="text"
+                          value={regUsername}
+                          onChange={(e) => setRegUsername(e.target.value)}
+                          placeholder="Zadajte prezývku"
+                          required
+                      />
+                      {errors.username && <p className="text-red-500">{errors.username}</p>}
+                    </div>
+                    <div className="input-group">
+                      <label>E-mail</label>
+                      <input
+                          type="email"
+                          value={regEmail}
+                          onChange={(e) => setRegEmail(e.target.value)}
+                          placeholder="your@email.com"
+                          required
+                      />
+                      {errors.email && <p className="text-red-500">{errors.email}</p>}
+                    </div>
+                    <div className="input-group">
+                      <label>Dátum narodenia</label>
+                      <input
+                          type="date"
+                          value={regAge}
+                          onChange={(e) => setRegAge(e.target.value)}
+                          required
+                      />
+                      {errors.age && <p className="text-red-500">{errors.age}</p>}
+                    </div>
+                    <div className="auth-row">
+                      <div className="input-group">
+                        <label>Heslo</label>
+                        <input
+                            type="password"
+                            value={regPassword}
+                            onChange={(e) => setRegPassword(e.target.value)}
+                            placeholder="••••••••"
+                            required
+                        />
+                        {errors.password && <p className="text-red-500">{errors.password}</p>}
+                      </div>
+                      <div className="input-group">
+                        <label>Potvrďte heslo</label>
+                        <input
+                            type="password"
+                            value={regConfirm}
+                            onChange={(e) => setRegConfirm(e.target.value)}
+                            placeholder="••••••••"
+                            required
+                        />
+                        {errors.confirm && <p className="text-red-500">{errors.confirm}</p>}
+                      </div>
+                    </div>
+                  </>
+              )}
+              <button
+                  type="submit"
+                  className={`submit-btn ${activeTab === "register" ? "register-variant" : ""}`}
+              >
+                {activeTab === "login" ? "Prihlásiť sa" : "Vytvoriť účet"}
+              </button>
+            </form>
+          </div>
+        </div>
       </div>
   );
 };

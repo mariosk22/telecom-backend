@@ -2,11 +2,10 @@ package com.example.project_10.controller;
 
 import com.example.project_10.dto.LikeStatusDto;
 import com.example.project_10.entity.User;
-import com.example.project_10.repository.UserRepository;
 import com.example.project_10.service.LikeService;
+import com.example.project_10.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,16 +21,16 @@ public class LikeController {
     private LikeService likeService;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @GetMapping("/{id}/likes")
     public ResponseEntity<?> getLikes(@PathVariable("id") Long postId, @AuthenticationPrincipal UserDetails userDetails){
         try {
             Long userId = getUserId(userDetails);
             LikeStatusDto status = likeService.getStatus(postId, userId);
-            return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(status);
+            return ResponseEntity.status(HttpStatus.OK).body(status);
         }catch (Exception e){
-            return ResponseEntity.status(HttpStatusCode.valueOf(400)).body("Loading likes failed!");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Loading likes failed!");
         }
     }
 
@@ -41,13 +40,13 @@ public class LikeController {
             Long userId = getUserId(userDetails);
 
             if(userId == null){
-                return ResponseEntity.status(HttpStatusCode.valueOf(401)).body("Unauthorized!");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized!");
             }
 
             LikeStatusDto status = likeService.likePost(postId, userId);
-            return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(status);
+            return ResponseEntity.status(HttpStatus.OK).body(status);
         }catch (Exception e){
-            return ResponseEntity.status(HttpStatusCode.valueOf(400)).body("Like failed!");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Like failed!");
         }
     }
 
@@ -57,13 +56,13 @@ public class LikeController {
             Long userId = getUserId(userDetails);
 
             if(userId == null){
-                return ResponseEntity.status(HttpStatusCode.valueOf(401)).body("Unauthorized!");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized!");
             }
 
             LikeStatusDto status = likeService.unlikePost(postId, userId);
-            return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(status);
+            return ResponseEntity.status(HttpStatus.OK).body(status);
         }catch (Exception e){
-            return ResponseEntity.status(HttpStatusCode.valueOf(400)).body("Unlike failed!");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unlike failed!");
         }
     }
 
@@ -74,7 +73,7 @@ public class LikeController {
         }
 
         String email = userDetails.getUsername();
-        Optional<User> userNew = userRepository.findByEmail(email);
+        Optional<User> userNew = userService.findByEmail(email);
 
         if(userNew.isPresent()){
             User user = userNew.get();

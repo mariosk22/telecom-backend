@@ -6,7 +6,7 @@ import com.example.project_10.entity.Comment;
 import com.example.project_10.entity.User;
 import com.example.project_10.repository.CommentRepository;
 import com.example.project_10.repository.UserRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +25,7 @@ public class CommentService {
     @Autowired
     private UserRepository userRepository;
 
+    @Transactional
     public CommentResponseDto createComment(CommentDto commentDto, Long userId, Long postId) {
         Comment comment = new Comment();
         comment.setUserId(userId);
@@ -43,6 +44,7 @@ public class CommentService {
         return toResponseDto(savedComment, nickname);
     }
 
+    @Transactional(readOnly = true)
     public List<CommentResponseDto> getComments(Long postId) {
         List<Comment> comments = commentRepository.findByPostId(postId);
 
@@ -101,5 +103,9 @@ public class CommentService {
     @Transactional
     public void deleteComment(Comment comment) {
         commentRepository.delete(comment);
+    }
+
+    public Optional<Comment> findByIdAndPostId(Long commentId, Long postId) {
+        return commentRepository.findByIdAndPostId(commentId, postId);
     }
 }

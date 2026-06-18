@@ -1,10 +1,8 @@
-// src/components/theme-toggle/ThemeToggle.tsx
 import { useState, useEffect } from 'react';
 
 function ThemeToggle() {
   const [isLight, setIsLight] = useState(false);
 
-  // Načítanie témy pri štarte aplikácie
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
     const isLightMode = savedTheme === 'light';
