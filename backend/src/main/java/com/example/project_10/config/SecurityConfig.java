@@ -45,10 +45,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/posts/*/likes").permitAll()
                         .requestMatchers(HttpMethod.POST, "/posts/*/likes").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/posts/*/likes").authenticated()
+                        .requestMatchers("/messages/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
+
 }

@@ -1,4 +1,3 @@
-// src/data/posts.ts
 export type PostType = {
   id: number;
   user: string;

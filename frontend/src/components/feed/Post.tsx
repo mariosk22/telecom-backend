@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+const API_BASE_URL = "http://localhost:9090";
+
 type PostProps = {
   id: number;
   user: string;
@@ -17,6 +19,7 @@ type PostProps = {
 };
 
 function Post({
+  id,
   user,
   avatar,
   time,
@@ -33,13 +36,24 @@ function Post({
   const [liked, setLiked] = useState(initialLiked);
   const [likes, setLikes] = useState(initialLikes);
 
-  const handleLike = () => {
-    if (liked) {
-      setLikes(likes - 1);
-    } else {
-      setLikes(likes + 1);
+  const handleLike = async () => {
+    const newLiked = !liked;
+    setLiked(newLiked);
+    setLikes((prev) => prev + (newLiked ? 1 : -1));
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(`${API_BASE_URL}/posts/${id}/likes`, {
+        method: newLiked ? "POST" : "DELETE",
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      if (!response.ok) {
+        setLiked(!newLiked);
+        setLikes((prev) => prev + (newLiked ? -1 : 1));
+      }
+    } catch {
+      setLiked(!newLiked);
+      setLikes((prev) => prev + (newLiked ? -1 : 1));
     }
-    setLiked(!liked);
   };
 
   return (
@@ -55,7 +69,6 @@ function Post({
             <span>{time}</span>
           </div>
         </div>
-        <button className="btn-follow">Sledovať</button>
       </div>
 
       <div className="post-content">
