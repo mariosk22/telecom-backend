@@ -70,7 +70,7 @@ function CommentsOverlay({ isOpen, postId, onClose, onCountChange }: CommentsOve
     return () => window.removeEventListener('keydown', handleEscape);
   }, [isOpen, onClose]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!newComment.trim()) return;
     const token = localStorage.getItem("token");
     try {

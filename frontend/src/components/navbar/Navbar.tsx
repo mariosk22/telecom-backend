@@ -126,13 +126,6 @@ function Navbar({ onPostCreated, onLogout, searchQuery = "", onSearchChange }: N
                       Odhlásiť sa
                     </button>
                   </div>
-                </div>
-                <hr className="profile-divider" />
-                <button className="profile-logout-btn" onClick={handleLogout}>
-                  <i className="fa-solid fa-right-from-bracket"></i>
-                  Odhlásiť sa
-                </button>
-              </div>
             )}
           </div>
         </div>
