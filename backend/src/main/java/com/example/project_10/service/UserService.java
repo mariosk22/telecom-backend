@@ -53,11 +53,11 @@ public class UserService {
     public List<UserSearchDto> searchByNickname(String query, String currentEmail) {
         List<UserSearchDto> result = new ArrayList<>();
         if (query == null || query.isBlank()) {
-            return result; // prazdny dopyt -> prazdny zoznam
+            return result;
         }
         for (User u : userRepository.findByNicknameContainingIgnoreCase(query)) {
             if (u.getEmail().equals(currentEmail)) {
-                continue; // seba nezobrazuj
+                continue;
             }
             result.add(new UserSearchDto(u.getId(), u.getNickname(), u.getName(), u.getSurname()));
         }
