@@ -3,6 +3,7 @@ package com.example.project_10.controller;
 import com.example.project_10.dto.MessageDto;
 import com.example.project_10.dto.MessageResponseDto;
 import com.example.project_10.entity.User;
+import com.example.project_10.exception.ApiException;
 import com.example.project_10.service.MessageService;
 import com.example.project_10.service.UserService;
 import jakarta.validation.Valid;
@@ -37,6 +38,13 @@ public class MessageController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Sending message failed!");
         }
+    }
+
+    @GetMapping("/conversations")
+    public ResponseEntity<?> getConversations(@AuthenticationPrincipal UserDetails userDetails) {
+        User currentUser = userService.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "User not found!"));
+        return ResponseEntity.ok(messageService.getConversations(currentUser.getId()));
     }
 
     @GetMapping("/conversation/{userId}")
