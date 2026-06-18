@@ -21,7 +21,7 @@ type FeedProps = {
   onStats?: (s: { posts: number; likes: number; comments: number }) => void;
 };
 
-const API_BASE_URL = "http://localhost:9090";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:9090";
 
 function Feed({ onRegisterRefresh, onStats }: FeedProps) {
   const [posts, setPosts] = useState<PostType[]>([]);

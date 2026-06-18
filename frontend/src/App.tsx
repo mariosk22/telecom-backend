@@ -7,7 +7,7 @@ import RightRail from './components/rail/RightRail';
 
 type Stats = { posts: number; likes: number; comments: number };
 
-const API_BASE_URL = "http://localhost:9090";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:9090";
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);

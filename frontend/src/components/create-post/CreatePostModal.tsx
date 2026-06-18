@@ -5,7 +5,7 @@ type CreatePostModalProps = {
   onClose: () => void;
 };
 
-const API_BASE_URL = "http://localhost:9090";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:9090";
 const MAX_IMAGE_BYTES = 2 * 1024 * 1024; // 2 MB
 
 // načíta súbor obrázka ako base64 data URL (uloží sa do TEXT stĺpca a renderuje sa cez <img src>)
