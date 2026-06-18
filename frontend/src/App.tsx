@@ -12,6 +12,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:9090
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [stats, setStats] = useState<Stats>({ posts: 0, likes: 0, comments: 0 });
+    const [searchQuery, setSearchQuery] = useState("");
     const feedRefreshRef = useRef<(() => void) | null>(null);
 
     const handleLogout = () => {
@@ -36,12 +37,18 @@ function App() {
     return (
         <>
             <div className="aurora" aria-hidden="true"></div>
-            <Navbar onPostCreated={() => feedRefreshRef.current?.()} />
+            <Navbar
+                onPostCreated={() => feedRefreshRef.current?.()}
+                onLogout={handleLogout}
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+            />
             <div className="app-layout">
                 <LeftRail />
                 <Feed
                     onRegisterRefresh={(fn) => { feedRefreshRef.current = fn; }}
                     onStats={setStats}
+                    searchQuery={searchQuery}
                 />
                 <RightRail stats={stats} />
             </div>

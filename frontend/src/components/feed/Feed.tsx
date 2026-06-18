@@ -19,11 +19,12 @@ type PostType = {
 type FeedProps = {
   onRegisterRefresh?: (fn: () => void) => void;
   onStats?: (s: { posts: number; likes: number; comments: number }) => void;
+  searchQuery?: string;
 };
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:9090";
 
-function Feed({ onRegisterRefresh, onStats }: FeedProps) {
+function Feed({ onRegisterRefresh, onStats, searchQuery = "" }: FeedProps) {
   const [posts, setPosts] = useState<PostType[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
