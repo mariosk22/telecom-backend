@@ -19,26 +19,26 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:9090
 function CommentsOverlay({ isOpen, postId, onClose, onCountChange }: CommentsOverlayProps) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
-  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<number | null>(null);
   const [editText, setEditText] = useState("");
 
   useEffect(() => {
     if (isOpen && postId) {
       const myNickname = localStorage.getItem("userNickname");
       fetch(`${API_BASE_URL}/posts/${postId}/comments`)
-          .then((res) => res.json())
-          .then((data) => {
-            setComments(data.map((c: any) => {
-              const author = c.nickname ?? c.user ?? "Anonym";
-              return {
-                id: c.id,
-                user: author,
-                text: c.content ?? c.text ?? "",
-                isOwn: myNickname != null && author === myNickname,
-              };
-            }));
-          })
-          .catch(() => setComments([]));
+        .then((res) => res.json())
+        .then((data) => {
+          setComments(data.map((c: any) => {
+            const author = c.nickname ?? c.user ?? "Anonym";
+            return {
+              id: c.id,
+              user: author,
+              text: c.content ?? c.text ?? "",
+              isOwn: myNickname != null && author === myNickname,
+            };
+          }));
+        })
+        .catch(() => setComments([]));
     }
   }, [isOpen, postId]);
 
@@ -51,15 +51,6 @@ function CommentsOverlay({ isOpen, postId, onClose, onCountChange }: CommentsOve
     return () => {
       document.body.style.overflow = "";
     };
-  }, [isOpen]);
-
-  useEffect(() => {
-    if (isOpen) {
-      const count = Math.floor(Math.random() * 3) + 3;
-      const shuffled = [...randomComments].sort(() => 0.5 - Math.random());
-      setComments(shuffled.slice(0, count));
-    }
-    return () => { document.body.style.overflow = ""; };
   }, [isOpen]);
 
   useEffect(() => {
@@ -113,10 +104,25 @@ function CommentsOverlay({ isOpen, postId, onClose, onCountChange }: CommentsOve
       if (!response.ok) return;
       const updated = await response.json();
       setComments((prev) =>
-          prev.map((c) => (c.id === id ? { ...c, text: updated.content ?? updated.text ?? trimmed } : c))
+        prev.map((c) => (c.id === id ? { ...c, text: updated.content ?? updated.text ?? trimmed } : c))
       );
       setEditingId(null);
       setEditText("");
+    } catch {
+      return;
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(`${API_BASE_URL}/posts/${postId}/comments/${id}`, {
+        method: "DELETE",
+        headers: token ? { "Authorization": `Bearer ${token}` } : {},
+      });
+      if (!response.ok) return;
+      setComments((prev) => prev.filter((c) => c.id !== id));
+      onCountChange?.(-1);
     } catch {
       return;
     }
@@ -134,43 +140,43 @@ function CommentsOverlay({ isOpen, postId, onClose, onCountChange }: CommentsOve
           </button>
         </div>
 
-          <div className="comments-body">
-            {comments.length === 0 && (
-                <p style={{ color: "var(--text-dim)", textAlign: "center" }}>Zatiaľ žiadne komentáre</p>
-            )}
-            {comments.map((comment) => (
-                <div key={comment.id} className="comment-item">
-                  <div className="comment-item-header">
-                    <h4>{comment.user}</h4>
-                    {comment.isOwn && editingId !== comment.id && (
-                        <div className="comment-item-actions">
-                          <button
-                              className="comment-edit-btn"
-                              onClick={() => { setEditingId(comment.id); setEditText(comment.text); }}
-                          >
-                            <i className="fa-solid fa-pen"></i>
-                          </button>
-                          <button
-                              className="comment-delete-btn"
-                              onClick={() => handleDelete(comment.id)}
-                          >
-                            <i className="fa-solid fa-trash"></i>
-                          </button>
-                        </div>
-                    )}
+        <div className="comments-body">
+          {comments.length === 0 && (
+            <p style={{ color: "var(--text-dim)", textAlign: "center" }}>Zatiaľ žiadne komentáre</p>
+          )}
+          {comments.map((comment) => (
+            <div key={comment.id} className="comment-item">
+              <div className="comment-item-header">
+                <h4>{comment.user}</h4>
+                {comment.isOwn && editingId !== comment.id && (
+                  <div className="comment-item-actions">
+                    <button
+                      className="comment-edit-btn"
+                      onClick={() => { setEditingId(comment.id); setEditText(comment.text); }}
+                    >
+                      <i className="fa-solid fa-pen"></i>
+                    </button>
+                    <button
+                      className="comment-delete-btn"
+                      onClick={() => handleDelete(comment.id)}
+                    >
+                      <i className="fa-solid fa-trash"></i>
+                    </button>
                   </div>
-                  {editingId === comment.id ? (
-                      <div className="comment-edit-area">
+                )}
+              </div>
+              {editingId === comment.id ? (
+                <div className="comment-edit-area">
                   <textarea
                     value={editText}
                     onChange={(e) => setEditText(e.target.value)}
                     rows={3}
                   />
                   <div className="comment-edit-actions">
-                    <button className="comment-edit-cancel" onClick={() => setEditingIndex(null)}>
+                    <button className="comment-edit-cancel" onClick={() => setEditingId(null)}>
                       Zrušiť
                     </button>
-                    <button className="comment-edit-save" onClick={() => handleEditSave(index)}>
+                    <button className="comment-edit-save" onClick={() => handleEditSave(comment.id)}>
                       Uložiť
                     </button>
                   </div>
@@ -194,7 +200,7 @@ function CommentsOverlay({ isOpen, postId, onClose, onCountChange }: CommentsOve
           </button>
         </div>
       </div>
-    </div>  
+    </div>
   );
 }
 

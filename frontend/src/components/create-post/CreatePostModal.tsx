@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 type CreatePostModalProps = {
   isOpen: boolean;
   onClose: () => void;
+  onPostCreated?: () => void;
 };
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:9090";

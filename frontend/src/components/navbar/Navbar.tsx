@@ -134,6 +134,7 @@ function Navbar({ onPostCreated, onLogout, searchQuery = "", onSearchChange }: N
       <CreatePostModal
         isOpen={isCreatePostOpen}
         onClose={() => setIsCreatePostOpen(false)}
+        onPostCreated={onPostCreated}
       />
     </>
   );
