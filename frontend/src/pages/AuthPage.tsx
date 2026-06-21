@@ -74,8 +74,12 @@ const AuthPage: React.FC<{ onSuccess: () => void }> = ({ onSuccess }: { onSucces
         if (res?.token) {
           localStorage.setItem("token", res.token);
         }
+        localStorage.setItem("userEmail", loginEmail);
+        if (res?.nickname) localStorage.setItem("userNickname", res.nickname);
+        if (res?.name) localStorage.setItem("userName", res.name);
         onSuccess();
       } catch (err) {
+        setErrors({ loginEmail: "Nesprávny email alebo heslo" });
         return;
       }
     } else {
@@ -90,8 +94,12 @@ const AuthPage: React.FC<{ onSuccess: () => void }> = ({ onSuccess }: { onSucces
           surname: regSurname,
           birthDate: regAge,
         });
-        onSuccess();
+        localStorage.setItem("userNickname", regUsername);
+        localStorage.setItem("userName", regName);
+        setActiveTab("login");
+        setErrors({});
       } catch (err) {
+        setErrors({ email: "Registrácia zlyhala, skús iný email" });
         return;
       }
     }
