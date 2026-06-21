@@ -29,10 +29,8 @@ public class MessageService {
 
     @Transactional
     public MessageResponseDto sendMessage(MessageDto messageDto, Long senderId) {
-        User sender = userRepository.findById(senderId)
-                .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "Sender not found!"));
-        User recipient = userRepository.findById(messageDto.getRecipientId())
-                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Recipient not found!"));
+        User sender = userRepository.findById(senderId).orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "Sender not found!"));
+        User recipient = userRepository.findById(messageDto.getRecipientId()).orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Recipient not found!"));
 
         if (sender.getId().equals(recipient.getId())) {
             throw new ApiException(HttpStatus.BAD_REQUEST, "You cannot send a message to yourself!");
@@ -49,24 +47,31 @@ public class MessageService {
 
     @Transactional(readOnly = true)
     public List<ConversationDto> getConversations(Long currentUserId) {
-        List<Message> messages = messageRepository.findAllForUser(currentUserId); // najnovsie prve
-        Map<Long, ConversationDto> byPartner = new LinkedHashMap<>();              // zachova poradie
+        List<Message> messages = messageRepository.findAllForUser(currentUserId);
+        Map<Long, ConversationDto> byPartner = new LinkedHashMap<>();
 
         for (Message m : messages) {
             boolean iAmSender = m.getSender().getId().equals(currentUserId);
-            User other = iAmSender ? m.getRecipient() : m.getSender();
 
-            // prvy vyskyt partnera = jeho najnovsia sprava (zoznam je zoradeny zostupne)
+            User other;
+            if (iAmSender) {
+                other = m.getRecipient();
+            } else {
+                other = m.getSender();
+            }
+
             if (!byPartner.containsKey(other.getId())) {
-                byPartner.put(other.getId(), new ConversationDto(
+                ConversationDto dto = new ConversationDto(
                         other.getId(),
                         other.getNickname(),
                         m.getContent(),
                         m.getCreatedAt(),
                         iAmSender
-                ));
+                );
+                byPartner.put(other.getId(), dto);
             }
         }
+
         return new ArrayList<>(byPartner.values());
     }
 
