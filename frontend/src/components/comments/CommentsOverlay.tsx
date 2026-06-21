@@ -111,6 +111,21 @@ function CommentsOverlay({ isOpen, postId, onClose, onCountChange }: CommentsOve
     }
   };
 
+  const handleDelete = async (id: number) => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(`${API_BASE_URL}/posts/${postId}/comments/${id}`, {
+        method: "DELETE",
+        headers: token ? { "Authorization": `Bearer ${token}` } : {},
+      });
+      if (!response.ok) return;
+      setComments((prev) => prev.filter((c) => c.id !== id));
+      onCountChange?.(-1);
+    } catch {
+      return;
+    }
+  };
+
   if (!isOpen) return null;
 
   return (

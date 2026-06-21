@@ -75,3 +75,21 @@ body.light-mode .scroll button {
 body.light-mode .scroll button:hover {
     color: white;
 }
+
+body.light-mode .auth-form-side {
+    background-color: var(--bg-dark);
+    background-image: radial-gradient(circle at bottom left, #ffffff, #e9ecf2);
+    color-scheme: light;
+}
+
+body.light-mode .auth-container {
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.12);
+}
+
+body.light-mode .auth-container .input-group input {
+    background: #ffffff;
+}
+
+body.light-mode .text-red-500 {
+    color: #dc2626;
+}

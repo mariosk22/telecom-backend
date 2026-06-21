@@ -19,11 +19,12 @@ type PostType = {
 type FeedProps = {
   onRegisterRefresh?: (fn: () => void) => void;
   onStats?: (s: { posts: number; likes: number; comments: number }) => void;
+  searchQuery?: string;
 };
 
 const API_BASE_URL = "http://localhost:9090";
 
-function Feed({ onRegisterRefresh, onStats }: FeedProps) {
+function Feed({ onRegisterRefresh, onStats, searchQuery = "" }: FeedProps) {
   const [posts, setPosts] = useState<PostType[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
@@ -64,7 +65,6 @@ function Feed({ onRegisterRefresh, onStats }: FeedProps) {
     if (onRegisterRefresh) onRegisterRefresh(fetchPosts);
   }, []);
 
-  // filtrovanie podľa hľadaného výrazu (nadpis alebo obsah)
   const filteredPosts = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     if (!q) return posts;
@@ -73,12 +73,10 @@ function Feed({ onRegisterRefresh, onStats }: FeedProps) {
     );
   }, [posts, searchQuery]);
 
-  // pri zmene hľadania zacni od prvého výsledku
   useEffect(() => {
     setCurrentIndex(0);
   }, [searchQuery]);
 
-  // udrž počet komentárov na príspevku v synchronizácii s overlayom
   const adjustCommentCount = (postId: number, delta: number) => {
     setPosts((prev) =>
       prev.map((p) =>
