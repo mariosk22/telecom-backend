@@ -3,6 +3,7 @@ import { login as apiLogin, register as apiRegister } from "../api/api";
 
 // Password must be at least 8 characters, contain at least one uppercase letter, one number and one special character
 const passwordRegex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$/;
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MIN_AGE = 15;
 
 const AuthPage: React.FC<{ onSuccess: () => void }> = ({ onSuccess }: { onSuccess: () => void }) => {
@@ -23,8 +24,10 @@ const AuthPage: React.FC<{ onSuccess: () => void }> = ({ onSuccess }: { onSucces
 
   const validateLogin = () => {
     const err: any = {};
-    if (!loginEmail || !loginEmail.includes("@"))
-      err.loginEmail = "Zadajte platný e-mail";
+    if (!loginEmail.trim())
+      err.loginEmail = "Zadajte e-mail";
+    else if (!emailRegex.test(loginEmail))
+      err.loginEmail = "Zadajte platný e-mail (napr. meno@domena.sk)";
     if (!loginPassword || loginPassword.length < 8)
       err.loginPassword = "Heslo musí mať aspoň 8 znakov";
     setErrors(err);
@@ -39,8 +42,10 @@ const AuthPage: React.FC<{ onSuccess: () => void }> = ({ onSuccess }: { onSucces
       err.surname = "Priezvisko musí mať aspoň 2 znaky";
     if (!regUsername || regUsername.trim().length < 3)
       err.username = "Nickname musí mať aspoň 3 znaky";
-    if (!regEmail || !regEmail.includes("@"))
-      err.email = "Zadajte platný email";
+    if (!regEmail.trim())
+      err.email = "Zadajte e-mail";
+    else if (!emailRegex.test(regEmail))
+      err.email = "Zadajte platný e-mail (napr. meno@domena.sk)";
     if (!regPassword || !passwordRegex.test(regPassword))
       err.password = "Heslo musí obsahovať písmeno, číslo a špeciálny znak (min 8 znakov)";
     if (!regAge) {
@@ -130,7 +135,7 @@ const AuthPage: React.FC<{ onSuccess: () => void }> = ({ onSuccess }: { onSucces
               </button>
             </div>
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} noValidate>
               {activeTab === "login" ? (
                   <>
                     <div className="input-group">

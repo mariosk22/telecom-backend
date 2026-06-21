@@ -2,6 +2,7 @@ package com.example.project_10.controller;
 
 import com.example.project_10.dto.LikeStatusDto;
 import com.example.project_10.entity.User;
+import com.example.project_10.exception.ApiException;
 import com.example.project_10.service.LikeService;
 import com.example.project_10.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,46 +25,27 @@ public class LikeController {
     private UserService userService;
 
     @GetMapping("/{id}/likes")
-    public ResponseEntity<?> getLikes(@PathVariable("id") Long postId, @AuthenticationPrincipal UserDetails userDetails){
-        try {
-            Long userId = getUserId(userDetails);
-            LikeStatusDto status = likeService.getStatus(postId, userId);
-            return ResponseEntity.status(HttpStatus.OK).body(status);
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Loading likes failed!");
-        }
+    public ResponseEntity<LikeStatusDto> getLikes(@PathVariable("id") Long postId, @AuthenticationPrincipal UserDetails userDetails) {
+        Long userId = getUserId(userDetails);
+        return ResponseEntity.ok(likeService.getStatus(postId, userId));
     }
 
     @PostMapping("/{id}/likes")
-    public ResponseEntity<?> likePost(@PathVariable("id") Long postId, @AuthenticationPrincipal UserDetails userDetails){
-        try {
-            Long userId = getUserId(userDetails);
-
-            if(userId == null){
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized!");
-            }
-
-            LikeStatusDto status = likeService.likePost(postId, userId);
-            return ResponseEntity.status(HttpStatus.OK).body(status);
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Like failed!");
+    public ResponseEntity<LikeStatusDto> likePost(@PathVariable("id") Long postId, @AuthenticationPrincipal UserDetails userDetails) {
+        Long userId = getUserId(userDetails);
+        if (userId == null) {
+            throw new ApiException(HttpStatus.UNAUTHORIZED, "Unauthorized!");
         }
+        return ResponseEntity.ok(likeService.likePost(postId, userId));
     }
 
     @DeleteMapping("/{id}/likes")
-    public ResponseEntity<?> likeDelete(@PathVariable("id") Long postId, @AuthenticationPrincipal UserDetails userDetails){
-        try {
-            Long userId = getUserId(userDetails);
-
-            if(userId == null){
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized!");
-            }
-
-            LikeStatusDto status = likeService.unlikePost(postId, userId);
-            return ResponseEntity.status(HttpStatus.OK).body(status);
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unlike failed!");
+    public ResponseEntity<LikeStatusDto> likeDelete(@PathVariable("id") Long postId, @AuthenticationPrincipal UserDetails userDetails) {
+        Long userId = getUserId(userDetails);
+        if (userId == null) {
+            throw new ApiException(HttpStatus.UNAUTHORIZED, "Unauthorized!");
         }
+        return ResponseEntity.ok(likeService.unlikePost(postId, userId));
     }
 
 

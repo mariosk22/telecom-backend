@@ -1,8 +1,10 @@
 package com.example.project_10.controller;
 
+import com.example.project_10.dto.ConversationDto;
 import com.example.project_10.dto.MessageDto;
 import com.example.project_10.dto.MessageResponseDto;
 import com.example.project_10.entity.User;
+import com.example.project_10.exception.ApiException;
 import com.example.project_10.service.MessageService;
 import com.example.project_10.service.UserService;
 import jakarta.validation.Valid;
@@ -26,58 +28,33 @@ public class MessageController {
     private UserService userService;
 
     @PostMapping
-    public ResponseEntity<?> sendMessage(@Valid @RequestBody MessageDto request, @AuthenticationPrincipal UserDetails userDetails) {
-        try {
-            User currentUser = userService.findByEmail(userDetails.getUsername()).orElse(null);
-            if (currentUser == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found!");
-            }
-            MessageResponseDto created = messageService.sendMessage(request, currentUser.getId());
-            return ResponseEntity.status(HttpStatus.CREATED).body(created);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Sending message failed!");
-        }
+    public ResponseEntity<MessageResponseDto> sendMessage(@Valid @RequestBody MessageDto request, @AuthenticationPrincipal UserDetails userDetails) {
+        User currentUser = userService.findByEmail(userDetails.getUsername()).orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "User not found!"));
+        MessageResponseDto created = messageService.sendMessage(request, currentUser.getId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
+    @GetMapping("/conversations")
+    public ResponseEntity<List<ConversationDto>> getConversations(@AuthenticationPrincipal UserDetails userDetails) {
+        User currentUser = userService.findByEmail(userDetails.getUsername()).orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "User not found!"));
+        return ResponseEntity.ok(messageService.getConversations(currentUser.getId()));
     }
 
     @GetMapping("/conversation/{userId}")
-    public ResponseEntity<?> getConversation(@PathVariable Long userId, @AuthenticationPrincipal UserDetails userDetails) {
-        try {
-            User currentUser = userService.findByEmail(userDetails.getUsername()).orElse(null);
-            if (currentUser == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found!");
-            }
-            List<MessageResponseDto> conversation = messageService.getConversation(currentUser.getId(), userId);
-            return ResponseEntity.status(HttpStatus.OK).body(conversation);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Loading conversation failed!");
-        }
+    public ResponseEntity<List<MessageResponseDto>> getConversation(@PathVariable Long userId, @AuthenticationPrincipal UserDetails userDetails) {
+        User currentUser = userService.findByEmail(userDetails.getUsername()).orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "User not found!"));
+        return ResponseEntity.ok(messageService.getConversation(currentUser.getId(), userId));
     }
 
     @GetMapping("/inbox")
-    public ResponseEntity<?> getInbox(@AuthenticationPrincipal UserDetails userDetails) {
-        try {
-            User currentUser = userService.findByEmail(userDetails.getUsername()).orElse(null);
-            if (currentUser == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found!");
-            }
-            List<MessageResponseDto> inbox = messageService.getInbox(currentUser.getId());
-            return ResponseEntity.status(HttpStatus.OK).body(inbox);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Loading inbox failed!");
-        }
+    public ResponseEntity<List<MessageResponseDto>> getInbox(@AuthenticationPrincipal UserDetails userDetails) {
+        User currentUser = userService.findByEmail(userDetails.getUsername()).orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "User not found!"));
+        return ResponseEntity.ok(messageService.getInbox(currentUser.getId()));
     }
 
     @GetMapping("/sent")
-    public ResponseEntity<?> getSent(@AuthenticationPrincipal UserDetails userDetails) {
-        try {
-            User currentUser = userService.findByEmail(userDetails.getUsername()).orElse(null);
-            if (currentUser == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found!");
-            }
-            List<MessageResponseDto> sent = messageService.getSent(currentUser.getId());
-            return ResponseEntity.status(HttpStatus.OK).body(sent);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Loading sent messages failed!");
-        }
+    public ResponseEntity<List<MessageResponseDto>> getSent(@AuthenticationPrincipal UserDetails userDetails) {
+        User currentUser = userService.findByEmail(userDetails.getUsername()).orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "User not found!"));
+        return ResponseEntity.ok(messageService.getSent(currentUser.getId()));
     }
 }

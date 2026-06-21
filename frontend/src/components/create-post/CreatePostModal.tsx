@@ -7,9 +7,8 @@ type CreatePostModalProps = {
 };
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:9090";
-const MAX_IMAGE_BYTES = 2 * 1024 * 1024; // 2 MB
+const MAX_IMAGE_BYTES = 2 * 1024 * 1024;
 
-// načíta súbor obrázka ako base64 data URL (uloží sa do TEXT stĺpca a renderuje sa cez <img src>)
 const fileToDataUrl = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -25,7 +24,6 @@ function CreatePostModal({ isOpen, onClose, onPostCreated }: CreatePostModalProp
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  // meno autora – rovnaké ako vpravo hore (nickname), pod ktorým sa post zverejní
   const nickname = localStorage.getItem("userNickname") ?? "";
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {

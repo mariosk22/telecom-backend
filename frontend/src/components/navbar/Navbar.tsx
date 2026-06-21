@@ -17,7 +17,6 @@ function Navbar({ onPostCreated, onLogout, searchQuery = "", onSearchChange }: N
   const nickname = localStorage.getItem("userNickname") ?? "";
   const name = localStorage.getItem("userName") ?? "";
   const email = localStorage.getItem("userEmail") ?? "";
-  // identita zobrazená vpravo hore – rovnaká ako autor na príspevku (nickname)
   const displayName = nickname || name || email;
   const avatarSeed = nickname || email;
 
@@ -32,7 +31,6 @@ function Navbar({ onPostCreated, onLogout, searchQuery = "", onSearchChange }: N
     }
   }, []);
 
-  // zatvor profilové menu pri kliknutí mimo neho
   useEffect(() => {
     if (!isProfileOpen) return;
     const handleClickOutside = (e: MouseEvent) => {
